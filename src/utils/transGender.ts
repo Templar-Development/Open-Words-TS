@@ -1,0 +1,17 @@
+const transGender = (abb: any) => {
+  let w = "";
+
+  let genders = {
+    M: "masculine",
+    F: "feminine",
+    N: "neuter",
+    C: "C",
+    X: ""
+  };
+
+  w = genders[abb];
+
+  return w;
+};
+
+export default transGender;
