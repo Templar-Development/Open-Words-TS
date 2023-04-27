@@ -81,7 +81,7 @@ class Parse {
     // check against list of uniques
     for (const unique of Uniques) {
       if (word == unique.orth) {
-        out.push({ 'w': ['senses', unqiue.senses], "stems": [] });
+        out.push({ 'w': unique, "stems": [] });
         isUnique = true;
         console.log(out)
         break;
