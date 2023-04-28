@@ -1,6 +1,6 @@
 # Open Words
 
-Open Words TS is a port of Open Words Python code to Typescript for future maintenance and improvement.
+Open Words TS is a port of [Open Words](https://github.com/ArchimedesDigital/open_words) Python code to Typescript for future maintenance and improvement.
 Open Words is a port Of William Whitaker's original ada code to python.
 
 Find the original Whitaker's Words written in Ada at https://github.com/dsanson/Words, thoughtfully documented and maintained by [dsanson](https://github.com/dsanson).  More information about William Whitaker and the Words program is available there.  
