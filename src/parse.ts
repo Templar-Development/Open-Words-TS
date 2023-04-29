@@ -24,10 +24,6 @@ class Parse {
 
     let out = [];
 
-    //temp vars (should be passed from search.ts)
-    formatted  = true;
-    direction = "lte"
-
     line = this.sanitize(line);
     let words = line.split(' ');
 
