@@ -64,7 +64,7 @@ class Parse {
       //format the output
     }
 
-    return {'word': s, 'defs': out}
+    return {"word": s, "defs": out}
   }
 
   private latinToEnglish(word: string): any {
@@ -81,9 +81,8 @@ class Parse {
     // check against list of uniques
     for (const unique of Uniques) {
       if (word == unique.orth) {
-        out.push({ 'w': unique, "stems": [] });
+        out.push({ "w": unique, "stems": [] });
         isUnique = true;
-        console.log(out)
         break;
       }
     }
@@ -102,6 +101,22 @@ class Parse {
     let out: any = [];
 
     return out;
+  }
+
+  private checkStems(s: string, infls: any): any {
+    /**
+     * For each inflection that was a match, remove the inflection from
+     * the end of the word string and then check the resulting stem
+     * against the list of stems from stemList.ts
+     */
+
+    let matchStems: any = [];
+
+    // For each of the inflections that is a match, strip the inflection from the end of the word
+    // Then look up the stripped word (w) in the stems
+    for (const infl of infls) {
+
+    }
   }
 
   private splitEnclitic(s: string): any {
@@ -134,7 +149,7 @@ class Parse {
         }
       }
     } else {
-      for (const e of LatinAddons.not_packons) {
+      for (const e of LatinAddons.notPackons) {
         if (s.endsWith(e.orth)) {
           out.push({ 'w': e });
           s = s.replace(new RegExp(e.orth + "$"), "");
