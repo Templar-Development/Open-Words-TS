@@ -1,7 +1,7 @@
 const transMood = (abb: any) => {
   let w = "";
 
-  let moods = {
+  let moods: any = {
     IND: "indicative",
     SUB: "subjunctive",
     IMP: "imperative",

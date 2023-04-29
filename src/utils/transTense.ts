@@ -1,7 +1,7 @@
 const transTense = (abb: any) => {
   let w = "";
 
-  let tenses = {
+  let tenses: any = {
     PRES: "present",
     IMPF: "imperfect",
     PERF: "perfect",

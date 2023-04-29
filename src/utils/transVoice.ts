@@ -1,7 +1,7 @@
 const transVoice = (abb: any) => {
   let w = "";
 
-  let voices = {
+  let voices: any = {
     ACTIVE: "active",
     PASSIVE: "passive",
     X: ""

@@ -1,7 +1,7 @@
 const transDeclensions = (abb: any) => {
   let w = "";
 
-  let declensions = {
+  let declensions: any = {
     NOM: "nominative",
     VOC: "vocative",
     GEN: "genitive",

@@ -1,7 +1,7 @@
 const transNumber = (abb: any) => {
   let w = "";
 
-  let numbers = {
+  let numbers: any = {
     S: "singular",
     P: "plural",
     X: ""

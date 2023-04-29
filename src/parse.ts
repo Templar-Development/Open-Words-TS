@@ -1,3 +1,7 @@
+/**
+ * Corresponding to Whitaker's Words parse.adb file
+ */
+
 import WordsDict from "./data/dictLine";
 import LatinAddons from "./data/addons";
 import Stems from "./data/stemList";
@@ -20,7 +24,7 @@ class Parse {
     this.inflects.sort((a: any, b: any) => a.ending.length - b.ending.length);
   }
 
-  public parseLine(line: any, direction: "lte" | "etl", formatted: boolean): any{
+  public parseLine(line: any, direction: "lte" | "etl", formatted: boolean): any {
     // Prase a line of words delimitated by spaces
 
     let out = [];
@@ -61,7 +65,7 @@ class Parse {
       //format the output
     }
 
-    return {"word": s, "defs": out}
+    return { "word": s, "defs": out }
   }
 
   private latinToEnglish(word: string): any {
@@ -100,20 +104,53 @@ class Parse {
     return out;
   }
 
+  private findForms(s: string, reduced: boolean): any {
+    let infls: any = [];
+    let out: any = [];
+
+    // Check against list of inflections
+    for (const infl of this.inflects) {
+      if (s.endsWith(infl.ending)) {
+
+        // If the longest inflection has been found, stop looking
+        if (infls.length > 0 && infls[0].ending.length > infl.ending.length) {
+          break;
+        } else {
+          infls.push(infl);
+        }
+      }
+    }
+
+    // Run against the list of stems
+    const stems = this.checkStems(s, infls);
+
+    // look up in dictionary
+    if (reduced) {
+      // Word ends are not looked up in the dictionary, so words are not weird
+
+
+    } else {
+
+    }
+
+
+
+  }
+
   private checkStems(s: string, infls: any): any {
     /**
      * For each inflection that was a match, remove the inflection from
      * the end of the word string and then check the resulting stem
      * against the list of stems from stemList.ts
      */
-  
+
     let matchStems: any = [];
-  
+
     // For each of the inflections that is a match, strip the inflection from the end of the word
     // Then look up the stripped word (w) in the stems
     for (const infl of infls) {
       const w = s.replace(new RegExp(`${infl.ending}$`), '');
-  
+
       for (const stem of this.stems) {
         if (w === stem.orth) {
           // If the inflection and stem identify as the same part of speech
@@ -124,14 +161,14 @@ class Parse {
             // Ensure the inflections apply to the correct stem decl/conj/etc
             if (infl.n[0] === stem.n[0]) {
               let isInMatchStems = false;
-  
-              // If this stem is already in the match_stems list, add infl to that stem (if not already an infl in that stem list)
+
+              // If this stem is already in the matchStems list, add infl to that stem (if not already an infl in that stem list)
               for (let i = 0; i < matchStems.length; i++) {
                 const mst = matchStems[i];
                 if (stem === mst.st) {
                   isInMatchStems = true;
-  
-                  // So the matches a stem in the match_stems. Is it unique to that stem's infls. If so, append it to that stem's infls.
+
+                  // So the matches a stem in the matchStems. Is it unique to that stem's infls. If so, append it to that stem's infls.
                   let isInStemInfls = false;
                   for (const stemInfl of mst.infls) {
                     if (stemInfl.form === infl.form) {
@@ -140,13 +177,13 @@ class Parse {
                       break;
                     }
                   }
-  
+
                   if (!isInStemInfls) {
                     mst.infls.push(infl);
                   }
                 }
               }
-  
+
               if (!isInMatchStems) {
                 matchStems.push({ st: stem, infls: [infl] });
               }
@@ -155,10 +192,67 @@ class Parse {
         }
       }
     }
-  
+
     return matchStems;
   }
-  
+
+  private lookupStems(matchStems: any, out: any): any {
+    // Find the word id mentioned in the stem in the dictionary
+
+    for (let i = 0; i < matchStems.length; i++) {
+      const stem = matchStems[i];
+      for (let i = 0; i < this.wordsDict.length; i++) {
+        const word = this.wordsDict[i];
+        // Lookup by id
+        if (stem['id']['wid'] != word['id']) break;
+        let wordIsInOut = false;
+
+        for (let i = 0; i < out.length; i++) {
+          const w = out[i];
+          if ('id' in w['w'] && word['id'] == w['w']['id'] || w['w']['orth'] == word['orth']) {
+            // It is in the out list already, flag and then check if the stem is already in the stems
+            wordIsInOut = true;
+
+            // Ensure the stem is not already in the out word stems
+            let wordIsInOutWordStems = false;
+            for (const st of out[i]['stems']) {
+              if (st === stem) {
+                wordIsInOutWordStems = true;
+                // We have a match, break the loop
+                break;
+              }
+            }
+
+            if (!wordIsInOutWordStems) {
+              out[i]['stems'].push(stem);
+            }
+            // If we matched a word in the out, break the loop
+            break;
+          }
+          let tempStem = stem;
+          // If the word isn't in the out yet
+          if (!wordIsInOut) {
+            // Check the VPAR / V relationship
+            if (word['pos'] === 'V') {
+              // If the stem doesn't match the 4th principle part, it's not VPAR
+              if (word['parts'].indexOf(stem['st']['orth']) === 3) {
+                // Remove "V" infls
+                tempStem = this.removeExtraInfls(stem, 'V');
+              } else {
+                // Remove "VPAR" infls
+                tempStem = this.removeExtraInfls(stem, 'VPAR');
+              }
+            }
+
+            out.push({ w: {...word}, stems: [tempStem] });
+          }
+        }
+      }
+    }
+
+    return out;
+  }
+
   private splitEnclitic(s: string): any {
     //Split enclitic ending from word
 
@@ -199,6 +293,21 @@ class Parse {
     }
 
     return [s, out];
+  }
+
+  private removeExtraInfls(stem: any, removeType: string = "VPAR"): any {
+    // Make a copy of the stem's inflections
+    const stemInflsCopy = [...stem.infls];
+
+    // Loop through the copy of inflections and remove any with a matching removeType
+    for (const infl of stemInflsCopy) {
+      if (infl.pos === removeType) {
+        const index = stem.infls.indexOf(infl);
+        stem.infls.splice(index, 1);
+      }
+    }
+
+    return stem;
   }
 
   private sanitize(string: string): string {

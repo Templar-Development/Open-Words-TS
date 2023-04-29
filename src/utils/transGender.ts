@@ -1,7 +1,7 @@
 const transGender = (abb: any) => {
   let w = "";
 
-  let genders = {
+  let genders: any = {
     M: "masculine",
     F: "feminine",
     N: "neuter",
