@@ -13,7 +13,7 @@ import Inflects from "./data/inflects";
 class Parser {
   stems: ({ pos: string; form: string; orth: string; n: number[]; wid: number; } | { pos: string; form: string; orth: string; n: string[]; wid: number; })[];
   inflects: { ending: string; pos: string; note: string; n: (string | number)[]; form: string; }[];
-  uniques: { orth: string; pos: string; senses: { def: string; }[]; }[];
+  uniques: { orth: string; pos: string; senses: string[]; }[];
   //TODO: Add type for addons
   addons: any;
   wordsDict: ({ pos: string; n: number[]; parts: string[]; senses: string[]; form: string; orth: string; id: number; } | { pos: string; n: string[]; parts: string[]; senses: string[]; form: string; orth: string; id: number; })[];
@@ -40,7 +40,7 @@ class Parser {
 
     let out = [];
 
-    line = this.sanitize(line);
+    line = this.formatter.sanitize(line);
     let words = line.split(' ');
 
     for (let i = 0; i < words.length; i++) {
@@ -68,11 +68,13 @@ class Parser {
     //do lookup based on parse direction
     if (direction === 'lte') {
       out = this.latinToEnglish(s);
+    } else if (direction === 'etl'){
+      out = this.englishToLatin(s);
     } else {
-
+      throw new Error("Invalid direction");
     }
 
-    if (formatted) {
+    if (formatted && direction === 'lte') {
       out = this.formatter.formatOutput(out);
     }
 
@@ -108,11 +110,56 @@ class Parser {
   }
 
   private englishToLatin(word: string): any {
-    //Find Latin word from English definition
-
+    // Find Latin word from English definition
     let out: any = [];
+  
+    // Check against list of uniques
+    for (const unique of this.uniques) {
+      for (const sense of unique.senses) {
+        if (sense.toLowerCase().includes(word.toLowerCase())) {
+          out.push({ "w": unique, "stems": [] });
+          break;
+        }
+      }
+    }
+  
+    // If it's not in the list of uniques
+    if (out.length === 0) {
+      out = this.lookupWord(word);
+    }
+
+    console.log(out);
+  
+    return out;
+  }
+  
+  private lookupWord(word: string): any {
+    let out: any = [];
+  
+    for (const dictLine of this.wordsDict) {
+      for (const sense of dictLine.senses) {
+        if (sense.toLowerCase().includes(word.toLowerCase())) {
+          out.push({ "w": dictLine, "stems": [] });
+          break;
+        }
+      }
+    }
+  
+    //this.getStems(dictLine.form, dictLine.pos)
 
     return out;
+  }
+  
+  private getStems(form: string, pos: string): any {
+    let stems: any = [];
+  
+    for (const stem of this.stems) {
+      if (stem.pos === pos && stem.form === form) {
+        stems.push(stem);
+      }
+    }
+  
+    return stems;
   }
 
   private findForms(s: string, reduced: boolean): any {
@@ -366,17 +413,6 @@ class Parser {
     }
 
     return stem;
-  }
-
-  private sanitize(string: string): string {
-    //sanitize the input string from all punct and numbers, make lowercase
-
-    let s = string.toLowerCase();
-    s = s.replace(/[^a-z ]/g, '');
-    s = s.replace(/[0-9]/g, '');
-    s = s.replace(/\s+/g, ' ');
-
-    return s;
   }
 }
 

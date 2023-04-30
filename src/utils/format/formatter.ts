@@ -200,6 +200,17 @@ class Formatter {
     }
     return formatted;
   }
+
+  public sanitize(string: string): string {
+    //sanitize the input string from all punct and numbers, make lowercase
+
+    let s = string.toLowerCase();
+    s = s.replace(/[^a-z ]/g, '');
+    s = s.replace(/[0-9]/g, '');
+    s = s.replace(/\s+/g, ' ');
+
+    return s;
+  }
 }
 
 export { Formatter };
