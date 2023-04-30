@@ -1,8 +1,8 @@
-import Parse from './src/parse';
+import { Parser } from './src/parser';
 
-const parse = new Parse();
+const parser = new Parser();
 
-let output: any = parse.parseLine("discipuli", "lte", true);
+let output: any = parser.parseLine("discipuli", "lte", true);
 let jsonOutput = JSON.stringify(output, null, 2);
 
 console.log(jsonOutput);

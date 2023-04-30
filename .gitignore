@@ -16,6 +16,7 @@
 #build
 /dist
 /tests
+reviewOutput.json
 
 # debug
 npm-debug.log*
