@@ -8,7 +8,7 @@ Find the original Whitaker's Words written in Ada at https://github.com/dsanson/
 
 ## Usage
 
-Use the `Parse` class as follows:
+Use the `Parser` class as follows:
 
 ### first value:
     String to search
@@ -21,11 +21,14 @@ Use the `Parse` class as follows:
     format answer
 
 ```
-import Parse from './src/parse';
+import { Parser } from './src/parser';
 
-const parse = new Parse();
+const parser = new Parser();
 
-console.log(parse.parseLine("Sunt geminae Somni portae", "lte", true));
+let output: any = parser.parseLine("Sunt geminae Somni portae", "lte", true);
+let jsonOutput = JSON.stringify(output, null, 2);
+
+console.log(jsonOutput);
 ```
 
 ````
