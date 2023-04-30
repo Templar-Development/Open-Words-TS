@@ -11,3 +11,5 @@ const transNumber = (abb: any) => {
 
   return w;
 };
+
+export default transNumber;
