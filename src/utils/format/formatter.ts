@@ -9,7 +9,7 @@ class Formatter {
   constructor() {}
 
   public formatOutput(out: any[], type: string = "condensed") {
-    const newOut: any = [];
+    let newOut: any = [];
 
     for (let word of out) {
       let obj: any = {
@@ -40,6 +40,7 @@ class Formatter {
 
             if (!isInFormattedInfls) {
               toAddInfls.push({
+                stem: stem["st"]["orth"],
                 ending: infl["ending"],
                 pos: infl["pos"],
                 form: infl["form"]
@@ -74,7 +75,31 @@ class Formatter {
       newOut.push(obj);
     }
 
+    // Because of different wid (word ids) in raw output of infls, once formatted, duplicate infls can occur and must be removed
+    //ex: diem
+    newOut = this.removeDuplicateInfls(newOut);
+
     return newOut;
+  }
+
+  //!!! More testing needed
+  //TODO: improve var names
+  private removeDuplicateInfls(words: any): any {
+    const formattedWords: any = [];
+    for (const word of words) {
+      const formattedDef: any = { orth: word.orth, senses: word.senses, infls: [] };
+      console.log(word)
+        const inflMap = new Map<string, any>();
+        for (const infl of word.infls) {
+          const key = `${infl.stem}-${infl.ending}-${infl.pos}-${infl.form.declension}-${infl.form.number}-${infl.form.gender}`;
+          if (!inflMap.has(key)) {
+            inflMap.set(key, infl);
+          }
+        }
+        formattedDef.infls = Array.from(inflMap.values());
+      formattedWords.push(formattedDef);
+    }
+    return formattedWords;
   }
 
   private formatMorph(word: any): any {
