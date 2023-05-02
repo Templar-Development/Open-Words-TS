@@ -74,7 +74,7 @@ class Parser {
       throw new Error("Invalid direction");
     }
 
-    if (formatted && direction === 'lte') {
+    if (formatted) {
       out = this.formatter.formatOutput(out);
     }
 
@@ -128,8 +128,6 @@ class Parser {
       out = this.lookupWord(word);
     }
 
-    console.log(out);
-  
     return out;
   }
   
@@ -144,7 +142,8 @@ class Parser {
         }
       }
     }
-  
+
+    //should be placed in stems after formatter can handle these stems
     //this.getStems(dictLine.form, dictLine.pos)
 
     return out;
@@ -349,8 +348,7 @@ class Parser {
                   tempStem = this.removeExtraInfls(stem, 'VPAR');
                 }
               }
-  
-              out.push({ w: { ...word }, stems: [tempStem] });
+            out.push({ w: { ...word }, stems: [tempStem] });
           }
         }
       }

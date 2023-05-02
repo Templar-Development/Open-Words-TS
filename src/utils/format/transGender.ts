@@ -1,3 +1,8 @@
+/**
+ * C: common (masculine and/or feminine)
+ * X: all, none, or unknown
+ */
+
 const transGender = (abb: any) => {
   let w = "";
 
