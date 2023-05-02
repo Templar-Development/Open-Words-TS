@@ -9,10 +9,10 @@ class Formatter {
   constructor() {}
 
   public formatOutput(out: any[], type: string = "condensed") {
-    let newOut: any = [];
+    let cleanOutput: any = [];
 
     for (let word of out) {
-      let obj: any = {
+      let def: any = {
         orth: [],
         senses: word["w"]["senses"],
         infls: []
@@ -20,26 +20,26 @@ class Formatter {
 
       // Format the orth of the new object
       if ("parts" in word["w"]) {
-        obj.orth = word["w"]["parts"];
+        def.orth = word["w"]["parts"];
       } else {
-        obj.orth = [word["w"]["orth"]];
+        def.orth = [word["w"]["orth"]];
       }
 
       // Format the stems / inflections of the new object
       if ("stems" in word) {
         for (let stem of word["stems"]) {
-          let toAddInfls = [];
+          let collectedInflList = [];
           for (let infl of stem["infls"]) {
             // Ensure the infl isn't already in the infls
             let isInFormattedInfls: boolean = false;
-            for (let formattedInfl of toAddInfls) {
+            for (let formattedInfl of collectedInflList) {
               if (infl["form"] == formattedInfl["form"]) {
                 isInFormattedInfls = true;
               }
             }
 
             if (!isInFormattedInfls) {
-              toAddInfls.push({
+              collectedInflList.push({
                 stem: stem["st"]["orth"],
                 ending: infl["ending"],
                 pos: infl["pos"],
@@ -48,9 +48,9 @@ class Formatter {
             }
           }
 
-          for (let formattedInfl of toAddInfls) {
-            if (!obj["infls"].includes(formattedInfl)) {
-              obj["infls"].push(formattedInfl);
+          for (let formattedInfl of collectedInflList) {
+            if (!def["infls"].includes(formattedInfl)) {
+              def["infls"].push(formattedInfl);
             }
           }
         }
@@ -59,8 +59,8 @@ class Formatter {
       }
 
       // If we still don't have any inflections associated with the object
-      if (obj["infls"].length == 0) {
-        obj["infls"] = [
+      if (def["infls"].length == 0) {
+        def["infls"] = [
           {
             form: word["w"]["form"],
             ending: "",
@@ -70,40 +70,47 @@ class Formatter {
       }
 
       // Format the morphological data for the word forms into a more useful output
-      obj = this.formatMorph(obj);
+      def = this.formatMorph(def);
 
-      newOut.push(obj);
+      cleanOutput.push(def);
     }
 
     // Because of different wid (word ids) in raw output of infls, once formatted, duplicate infls can occur and must be removed
     //ex: diem
-    newOut = this.removeDuplicateInfls(newOut);
+    cleanOutput = this.removeDuplicateInfls(cleanOutput);
 
-    return newOut;
+    return cleanOutput;
   }
 
   //!!! More testing needed
   //TODO: improve var names
   private removeDuplicateInfls(words: any): any {
-    const formattedWords: any = [];
+    const cleanOutput: any = [];
+
     for (const word of words) {
-      const formattedDef: any = { orth: word.orth, senses: word.senses, infls: [] };
-      console.log(word)
-        const inflMap = new Map<string, any>();
-        for (const infl of word.infls) {
-          const key = `${infl.stem}-${infl.ending}-${infl.pos}-${infl.form.declension}-${infl.form.number}-${infl.form.gender}`;
-          if (!inflMap.has(key)) {
-            inflMap.set(key, infl);
-          }
+      const formattedDef: any = {
+        orth: word.orth,
+        senses: word.senses,
+        infls: []
+      };
+
+      const inflMap = new Map<string, any>();
+
+      for (const infl of word.infls) {
+        const key = `${infl.stem}-${infl.ending}-${infl.pos}-${infl.form.declension}-${infl.form.number}-${infl.form.gender}`;
+        if (!inflMap.has(key)) {
+          inflMap.set(key, infl);
         }
-        formattedDef.infls = Array.from(inflMap.values());
-      formattedWords.push(formattedDef);
+      }
+
+      formattedDef.infls = Array.from(inflMap.values());
+      cleanOutput.push(formattedDef);
     }
-    return formattedWords;
+    return cleanOutput;
   }
 
-  private formatMorph(word: any): any {
-    for (let infl of word.infls) {
+  private formatMorph(out: any): any {
+    for (let infl of out.infls) {
       // Translate form
       infl.form = this.formatForm(infl.form, infl.pos);
 
@@ -141,7 +148,7 @@ class Formatter {
           break;
       }
     }
-    return word;
+    return out;
   }
 
   private formatForm(form: any, pos: any): any {
@@ -230,9 +237,9 @@ class Formatter {
     //sanitize the input string from all punct and numbers, make lowercase
 
     let s = string.toLowerCase();
-    s = s.replace(/[^a-z ]/g, '');
-    s = s.replace(/[0-9]/g, '');
-    s = s.replace(/\s+/g, ' ');
+    s = s.replace(/[^a-z ]/g, "");
+    s = s.replace(/[0-9]/g, "");
+    s = s.replace(/\s+/g, " ");
 
     return s;
   }
