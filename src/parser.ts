@@ -105,6 +105,12 @@ class Parser {
     if (!isUnique) {
       out = this.findForms(word, false);
     }
+    
+    // Some words like iecit, are jecit in the dictionary, they are the same word
+    if (out.length === 0 && word[0].toLowerCase() === "i") {
+      word = "j" + word.slice(1);
+      out = this.findForms(word, false);
+    }
 
     return out;
   }
