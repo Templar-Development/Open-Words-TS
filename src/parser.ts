@@ -106,7 +106,9 @@ class Parser {
       out = this.findForms(word, false);
     }
     
-    // Some words like iecit, are jecit in the dictionary, they are the same word
+    // TODO: handle this in findForms, to improve speed
+    // Some words that start with i can also start with j
+    // ex: iecit -> jecit
     if (out.length === 0 && word[0].toLowerCase() === "i") {
       word = "j" + word.slice(1);
       out = this.findForms(word, false);
