@@ -3,6 +3,7 @@
  */
 
 import { Formatter } from "./utils/format/formatter";
+import { Tricks } from "./utils/tricks";
 
 import WordsDict from "./data/dictLine";
 import LatinAddons from "./data/addons";
@@ -18,6 +19,7 @@ class Parser {
   addons: any;
   wordsDict: ({ pos: string; n: number[]; parts: string[]; senses: string[]; form: string; orth: string; id: number; } | { pos: string; n: string[]; parts: string[]; senses: string[]; form: string; orth: string; id: number; })[];
   formatter: Formatter;
+  tricks: Tricks;
   
   constructor() {
     this.stems = Stems;
@@ -32,7 +34,9 @@ class Parser {
     // Sort by length of ending
     this.inflects.sort((a: any, b: any) => a.ending.length - b.ending.length);
 
+    // Support classes
     this.formatter = new Formatter()
+    this.tricks = new Tricks();
   }
 
   public parseLine(line: any, direction: "lte" | "etl", formatted: boolean): any {
@@ -72,6 +76,14 @@ class Parser {
       out = this.englishToLatin(s);
     } else {
       throw new Error("Invalid direction");
+    }
+
+    if (this.tricks.onlyRomanDigits(s)) {
+      let num = this.tricks.evaluateRomanNumerals(s);
+
+      if (num != 0) {
+        out.push({ "w": { "orth": s, "pos": "INT", "n": [num], "parts": [], "senses": [num], "id": `${-1}` }, "stems": [] });
+      }
     }
 
     if (formatted) {

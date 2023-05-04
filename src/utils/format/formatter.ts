@@ -146,6 +146,12 @@ class Formatter {
         case "PREP":
           infl.pos = "preposition";
           break;
+        case "ADV":
+          infl.pos = "adverb";
+          break;
+        case "INT":
+          infl.pos = "number";
+          break;
       }
     }
     return out;
