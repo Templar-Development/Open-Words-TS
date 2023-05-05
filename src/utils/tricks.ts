@@ -124,7 +124,7 @@ class Tricks {
        * VI
        * VII
        * VIII
-       * VIII IX
+       * VIIII IX
        */
 
       // Ones

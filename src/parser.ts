@@ -114,6 +114,8 @@ class Parser {
       throw new Error("Invalid direction");
     }
 
+    console.log(JSON.stringify(out, null, 2))
+
     if (formatted) {
       out = this.formatter.formatOutput(out);
     }
@@ -140,16 +142,19 @@ class Parser {
       }
     }
 
-    // If it's not in the list of uniques
     if (!isUnique) {
       out = this.findForms(word, false);
     }
 
     // TODO: handle this in findForms, to improve speed
     // Some words that start with i can also start with j
+    // not sure if j is possible but it should not affect anything
     // ex: iecit -> jecit
     if (out.length === 0 && word[0].toLowerCase() === "i") {
       word = "j" + word.slice(1);
+      out = this.findForms(word, false);
+    } else if (out.length === 0 && word[0].toLowerCase() === "j") {
+      word = "i" + word.slice(1);
       out = this.findForms(word, false);
     }
 
@@ -246,20 +251,15 @@ class Parser {
     // Run against the list of stems
     const stems = this.checkStems(s, infls);
 
-    // look up in dictionary
-    if (reduced) {
-      // Word ends are not looked up in the dictionary, so words are not weird
-      // !!!: if results are wrong might need to implement getWordEnds
-      out = this.lookupStems(stems, out);
-    } else {
-      out = this.lookupStems(stems, out);
-    }
+    out = this.lookupStems(stems, out);
 
+    //!!! this is broken => germinae and prob others not searching, this the problem
     if (out.length === 0 && !reduced) {
       let rOut: any = this.reduce(s);
       // if there is more data after reducing, extend out
+      //!!! here
       if (rOut) {
-        out.extend(rOut);
+        out.push(rOut);
       }
     }
 
@@ -275,17 +275,17 @@ class Parser {
     let infls = [];
 
     // For each inflection match, check prefixes and suffixes
-    for (const prefix of this.addons["prefixes"]) {
-      if (s.startsWith(prefix["orth"])) {
-        s = s.replace(`^${prefix["orth"]}`, "");
+    for (const prefix of this.addons.prefixes) {
+      if (s.startsWith(prefix.orth)) {
+        s = s.replace(new RegExp(`^${prefix.orth}`), "");
         out.push({ w: prefix, stems: [], addon: "prefix" });
         break;
       }
     }
 
-    for (const suffix of this.addons["suffixes"]) {
-      if (s.endsWith(suffix["orth"])) {
-        s = s.replace(`${suffix["orth"]}$`, "");
+    for (const suffix of this.addons.suffixes) {
+      if (s.endsWith(suffix.orth)) {
+        s = s.replace(new RegExp(`${suffix.orth}$`), "");
         out.push({ w: suffix, stems: [], addon: "suffix" });
         break;
       }
@@ -362,7 +362,6 @@ class Parser {
         }
       }
     }
-
     return matchStems;
   }
 

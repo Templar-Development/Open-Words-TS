@@ -1,6 +1,0 @@
-words:
-geminae - no data (suspected problem - split ae)
-    gemin works
-    might need to re add getWordEnds
-
-clamaverunt - no data
