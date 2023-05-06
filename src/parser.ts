@@ -114,8 +114,6 @@ class Parser {
       throw new Error("Invalid direction");
     }
 
-    console.log(JSON.stringify(out, null, 2))
-
     if (formatted) {
       out = this.formatter.formatOutput(out);
     }
@@ -259,7 +257,7 @@ class Parser {
       // if there is more data after reducing, extend out
       //!!! here
       if (rOut) {
-        out.push(rOut);
+        out = out.concat(rOut);
       }
     }
 
@@ -270,9 +268,7 @@ class Parser {
     // Reduce the stem with suffixes and try again
 
     let out: any = [];
-    let isUnique: boolean = false;
     let foundNewMatch: boolean = false;
-    let infls = [];
 
     // For each inflection match, check prefixes and suffixes
     for (const prefix of this.addons.prefixes) {

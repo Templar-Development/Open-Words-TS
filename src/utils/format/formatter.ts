@@ -8,6 +8,7 @@ import transVoice from "./transVoice";
 class Formatter {
   constructor() {}
 
+  //TODO add format types
   public formatOutput(out: any[], type: string = "condensed") {
     let cleanOutput: any = [];
 
