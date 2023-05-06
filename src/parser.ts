@@ -11,6 +11,7 @@ import Stems from "./data/stemList";
 import Uniques from "./data/uniques";
 import Inflects from "./data/inflects";
 
+//!!!: an issue with inflects endings, noticed with erunt, possibly other too
 class Parser {
   stems: (
     | { pos: string; form: string; orth: string; n: number[]; wid: number }
@@ -247,15 +248,20 @@ class Parser {
     }
 
     // Run against the list of stems
-    const stems = this.checkStems(s, infls);
+    let stems = this.checkStems(s, infls, true);
+    // If no stems were found, try again without ensuring infls
+    // allows for words that end with erunt and similar cases
+    // ex: clamaverunt return null without this
+    if (stems.length === 0) {
+      stems = this.checkStems(s, infls, false);
+    }
+
 
     out = this.lookupStems(stems, out);
 
-    //!!! this is broken => germinae and prob others not searching, this the problem
     if (out.length === 0 && !reduced) {
       let rOut: any = this.reduce(s);
       // if there is more data after reducing, extend out
-      //!!! here
       if (rOut) {
         out = out.concat(rOut);
       }
@@ -303,7 +309,7 @@ class Parser {
     return out;
   }
 
-  private checkStems(s: string, infls: any): any {
+  private checkStems(s: string, infls: any, ensureInfls: boolean): any {
     /**
      * For each inflection that was a match, remove the inflection from
      * the end of the word string and then check the resulting stem
@@ -325,7 +331,10 @@ class Parser {
             (infl.pos === "VPAR" && stem.pos === "V")
           ) {
             // Ensure the inflections apply to the correct stem decl/conj/etc
-            if (infl.n[0] === stem.n[0]) {
+            if (infl.n[0] != stem.n[0] && ensureInfls) {
+              continue;
+            }
+              console.log("here")
               let isInMatchStems = false;
 
               // If this stem is already in the matchStems list, add infl to that stem (if not already an infl in that stem list)
@@ -353,7 +362,6 @@ class Parser {
               if (!isInMatchStems) {
                 matchStems.push({ st: stem, infls: [infl] });
               }
-            }
           }
         }
       }
