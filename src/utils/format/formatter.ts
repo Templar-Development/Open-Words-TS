@@ -153,6 +153,8 @@ class Formatter {
         case "INT":
           infl.pos = "number";
           break;
+        case "X":
+          infl.pos = "unknown"
       }
     }
     return out;

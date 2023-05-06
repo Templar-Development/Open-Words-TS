@@ -9,7 +9,7 @@ const transDeclensions = (abb: any) => {
     ACC: "accusative",
     LOC: "locative",
     ABL: "ablative",
-    X: ""
+    X: "unknown"
   };
 
   w = declensions[abb];

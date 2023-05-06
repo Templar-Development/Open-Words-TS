@@ -4,7 +4,7 @@ const transNumber = (abb: any) => {
   let numbers: any = {
     S: "singular",
     P: "plural",
-    X: ""
+    X: "unknown"
   };
 
   w = numbers[abb];

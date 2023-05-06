@@ -334,7 +334,6 @@ class Parser {
             if (infl.n[0] != stem.n[0] && ensureInfls) {
               continue;
             }
-              console.log("here")
               let isInMatchStems = false;
 
               // If this stem is already in the matchStems list, add infl to that stem (if not already an infl in that stem list)

@@ -6,7 +6,7 @@ const transMood = (abb: any) => {
     SUB: "subjunctive",
     IMP: "imperative",
     INF: "infinitive",
-    X: ""
+    X: "unknown"
   };
 
   w = moods[abb];

@@ -1,0 +1,31 @@
+https://web.archive.org/web/20111105213921/http://users.erols.com/whitaker/wordsdoc.htm#Latin-to-English%20Examples
+
+cornu
+    -- more than 1 possible meaning, but only 1 is shown
+
+bonum
+    -- wrong def
+    In this case there is a adjectival/demonstrative pronoun, or it may be an adverb. The POS means that the comparison of the adverb is positive.
+
+acerrimus
+    -- wrong def
+    Here is an adjective or and adverb. Although they are related in meaning, they are different words.
+
+sine
+    -- wrong def, expected without
+    Here is a PREPosition that takes an ABLative for an object.
+
+contra
+    -- not enough info
+
+et
+    -- too much info
+    Here is a PREPosition that might also be an ADVerb. This is a very common situation, with the meanings being much the same.
+
+populusque
+    -- not enough info, more defs
+
+pseudochristus
+    -- should split prefix (pseudo | false)
+    -- then find other word
+

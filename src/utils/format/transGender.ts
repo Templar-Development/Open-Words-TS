@@ -10,8 +10,8 @@ const transGender = (abb: any) => {
     M: "masculine",
     F: "feminine",
     N: "neuter",
-    C: "C",
-    X: ""
+    C: "masculine and/or feminine",
+    X: "unknown"
   };
 
   w = genders[abb];

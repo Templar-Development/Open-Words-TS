@@ -4,7 +4,7 @@ const transVoice = (abb: any) => {
   let voices: any = {
     ACTIVE: "active",
     PASSIVE: "passive",
-    X: ""
+    X: "unknown"
   };
 
   w = voices[abb];

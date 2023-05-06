@@ -9,7 +9,7 @@ const transTense = (abb: any) => {
     FUTP: "future perfect",
     PLUP: "pluperfect",
     INF: "infinitive",
-    X: ""
+    X: "unknown"
   };
 
   w = tenses[abb];
