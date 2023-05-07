@@ -9,7 +9,7 @@ body:
       label: Word
       description: "What word did you search?"
       placeholder: "Enter the word"
-    validation:
+    validations:
       required: true
   - type: dropdown
     id: transMode
@@ -18,14 +18,14 @@ body:
       options:
         - Latin To English
         - English To Latin
-    validation:
+    validations:
       required: true
   - type: textarea
     id: output
     attributes:
       label: Output
       description: "What output was given, if any."
-    validation:
+    validations:
       required: false
   - type: dropdown
     id: transSource
@@ -36,7 +36,7 @@ body:
         - learninglatin.net
         - Cloned Open Words TS
         - Other
-    validation:
+    validations:
       required: true
   - type: checkboxes
     id: prerequisites
