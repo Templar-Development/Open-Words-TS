@@ -79,12 +79,19 @@ class Formatter {
     // Because of different wid (word ids) in raw output of infls, once formatted, duplicate infls can occur and must be removed
     //ex: diem
     cleanOutput = this.removeDuplicateInfls(cleanOutput);
+    cleanOutput = this.removeEmptyStrings(cleanOutput);
 
     return cleanOutput;
   }
 
-  //!!! More testing needed
-  //TODO: improve var names
+  private removeEmptyStrings(cleanOutput: any): any {
+    for (const word of cleanOutput) {
+      word.orth = word.orth.filter((x: any) => x !== "");
+    }
+
+    return cleanOutput;
+  }
+
   private removeDuplicateInfls(words: any): any {
     const cleanOutput: any = [];
 
