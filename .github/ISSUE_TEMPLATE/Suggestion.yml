@@ -1,0 +1,27 @@
+name: "Suggestion"
+description: If you have an idea that can improve this program.
+title: "Cool Suggestion"
+labels: enhancement
+body:
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: "Give a detailed explanation of your suggestions, why it should be added, what it will do, etc..."
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Info
+      description: "If you have any ideas on how this can be implemented, or any other context."
+    validations:
+      required: false
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before submitting this issue
+      options:
+        - label: |
+            This suggestion is reasonably possible, and brings more function to the program
+          required: true
