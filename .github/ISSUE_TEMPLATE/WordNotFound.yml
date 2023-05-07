@@ -1,0 +1,51 @@
+name: "Word Not Found / Wrong Translation"
+description: The word you searched, was not found, or the results were wrong.
+title: "There was an error finding {word}"
+labels: bug
+body:
+  - type: input
+    id: word
+    attributes:
+      label: Word
+      description: "What word did you search?"
+      placeholder: "Enter the word"
+    validation:
+      required: true
+  - type: dropdown
+    id: transMode
+    attributes:
+      label: Translation Mode
+      options:
+        - Latin To English
+        - English To Latin
+    validation:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: "What output was given, if any."
+    validation:
+      required: false
+  - type: dropdown
+    id: transSource
+    attributes:
+      label: Translation Source
+      description: "Where did you get the translation from?"
+      options:
+        - learninglatin.net
+        - Cloned Open Words TS
+        - Other
+    validation:
+      required: true
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Before submitting this issue
+      options:
+        - label: |
+            I spelled the word correctly in my query.
+          required: true
+        - label: |
+            I am positive that the word I searched is a real word.
+          required: true
