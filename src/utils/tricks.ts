@@ -81,6 +81,23 @@ class Tricks {
     return true;
   }
 
+  // Some words that start with i can also start with j
+  // not sure if j is possible but it should not affect anything
+  // ex: iecit -> jecit
+  public switchFirstIOrJ(word: string): string {
+    word = word.toLowerCase();
+
+    if (word[0] == "i") {
+      return (word = "j" + word.slice(1));
+    }
+
+    if (word[0] == "j") {
+      return (word = "i" + word.slice(1));
+    }
+
+    return word;
+  }
+
   //TODO: improve this code
   public evaluateRomanNumerals(text: string): number {
     let total: number = 0;

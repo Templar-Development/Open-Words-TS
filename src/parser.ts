@@ -11,7 +11,6 @@ import Stems from "./data/stemList";
 import Uniques from "./data/uniques";
 import Inflects from "./data/inflects";
 
-//!!!: an issue with inflects endings, noticed with erunt, possibly other too
 class Parser {
   stems: (
     | { pos: string; form: string; orth: string; n: number[]; wid: number }
@@ -122,39 +121,57 @@ class Parser {
     return { word: s, defs: out };
   }
 
+  //TODO: improve this code
   private latinToEnglish(word: string): any {
     //Find definition and word formation from Latin word
 
     let isUnique = false;
     let out: any = [];
 
-    let split = this.splitEnclitic(word);
-    word = split[0];
-    out = split[1];
-
     // check against list of uniques
-    for (const unique of this.uniques) {
-      if (word == unique.orth) {
-        out.push({ w: unique, stems: [] });
-        isUnique = true;
-        break;
-      }
-    }
+    let uniqueOut = this.parseUniques(word);
+    out = uniqueOut[0];
+    isUnique = uniqueOut[1];
 
     if (!isUnique) {
       out = this.findForms(word, false);
     }
 
-    // TODO: handle this in findForms, to improve speed
     // Some words that start with i can also start with j
     // not sure if j is possible but it should not affect anything
     // ex: iecit -> jecit
-    if (out.length === 0 && word[0].toLowerCase() === "i") {
-      word = "j" + word.slice(1);
+    if (out.length === 0 && this.tricks.switchFirstIOrJ(word) != word) {
+      word = this.tricks.switchFirstIOrJ(word);
       out = this.findForms(word, false);
-    } else if (out.length === 0 && word[0].toLowerCase() === "j") {
-      word = "i" + word.slice(1);
-      out = this.findForms(word, false);
+    }
+
+    // If nothing is found, try removing enclitics and try again
+    // ex: clamaverunt -> clamare
+    // doing this here instead of earlier should fix words like salve having the "ve" removed and returning wrong def
+    if (out.length === 0) {
+      console.log("entered")
+      let split = this.splitEnclitic(word);
+      word = split[0];
+      out = split[1];
+
+      console.log(`split word: ${word}, split out: ${out}`)
+
+      uniqueOut = this.parseUniques(word);
+      out = uniqueOut[0];
+      isUnique = uniqueOut[1];
+
+      console.log(`unique out: ${out}, is unique: ${isUnique}`)
+
+      if (!isUnique) {
+        out = this.findForms(word, false);
+        console.log("did normal search")
+      }
+
+      if (out.length === 0 && this.tricks.switchFirstIOrJ(word) != word) {
+        word = this.tricks.switchFirstIOrJ(word);
+        out = this.findForms(word, false);
+        console.log("did i/j switch")
+      }
     }
 
     // translate roman numerals
@@ -177,6 +194,23 @@ class Parser {
     }
 
     return out;
+  }
+
+  private parseUniques(word: string): any {
+    // Find Latin word from English definition
+    let out: any = [];
+    let isUnique = false;
+
+    // Check against list of uniques
+    for (const unique of this.uniques) {
+      if (unique.orth.toLowerCase().includes(word.toLowerCase())) {
+        out.push({ w: unique, stems: [] });
+        isUnique = true;
+        break;
+      }
+    }
+
+    return [out, isUnique];
   }
 
   private englishToLatin(word: string): any {
@@ -212,23 +246,7 @@ class Parser {
         }
       }
     }
-
-    //should be placed in stems after formatter can handle these stems
-    //this.getStems(dictLine.form, dictLine.pos)
-
     return out;
-  }
-
-  private getStems(form: string, pos: string): any {
-    let stems: any = [];
-
-    for (const stem of this.stems) {
-      if (stem.pos === pos && stem.form === form) {
-        stems.push(stem);
-      }
-    }
-
-    return stems;
   }
 
   private findForms(s: string, reduced: boolean): any {
@@ -255,7 +273,6 @@ class Parser {
     if (stems.length === 0) {
       stems = this.checkStems(s, infls, false);
     }
-
 
     out = this.lookupStems(stems, out);
 
@@ -309,6 +326,7 @@ class Parser {
     return out;
   }
 
+  //TODO: if the stem is the word, also find it, ex: salve | look at whitaker response
   private checkStems(s: string, infls: any, ensureInfls: boolean): any {
     /**
      * For each inflection that was a match, remove the inflection from
@@ -334,33 +352,33 @@ class Parser {
             if (infl.n[0] != stem.n[0] && ensureInfls) {
               continue;
             }
-              let isInMatchStems = false;
+            let isInMatchStems = false;
 
-              // If this stem is already in the matchStems list, add infl to that stem (if not already an infl in that stem list)
-              for (let i = 0; i < matchStems.length; i++) {
-                const mst = matchStems[i];
-                if (stem === mst.st) {
-                  isInMatchStems = true;
+            // If this stem is already in the matchStems list, add infl to that stem (if not already an infl in that stem list)
+            for (let i = 0; i < matchStems.length; i++) {
+              const mst = matchStems[i];
+              if (stem === mst.st) {
+                isInMatchStems = true;
 
-                  // So the matches a stem in the matchStems. Is it unique to that stem's infls. If so, append it to that stem's infls.
-                  let isInStemInfls = false;
-                  for (const stemInfl of mst.infls) {
-                    if (stemInfl.form === infl.form) {
-                      isInStemInfls = true;
-                      // we found a match, stop looking
-                      break;
-                    }
-                  }
-
-                  if (!isInStemInfls) {
-                    mst.infls.push(infl);
+                // So the matches a stem in the matchStems. Is it unique to that stem's infls. If so, append it to that stem's infls.
+                let isInStemInfls = false;
+                for (const stemInfl of mst.infls) {
+                  if (stemInfl.form === infl.form) {
+                    isInStemInfls = true;
+                    // we found a match, stop looking
+                    break;
                   }
                 }
-              }
 
-              if (!isInMatchStems) {
-                matchStems.push({ st: stem, infls: [infl] });
+                if (!isInStemInfls) {
+                  mst.infls.push(infl);
+                }
               }
+            }
+
+            if (!isInMatchStems) {
+              matchStems.push({ st: stem, infls: [infl] });
+            }
           }
         }
       }
@@ -428,7 +446,7 @@ class Parser {
 
   private splitEnclitic(s: string): any {
     //Split enclitic ending from word
-
+    //!!! look at how working versions do this, and copy
     let out: any = [];
 
     // Test the different tackons / packons as specified in addons.ts
@@ -463,7 +481,6 @@ class Parser {
         }
       }
     }
-
     return [s, out];
   }
 
