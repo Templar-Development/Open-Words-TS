@@ -121,7 +121,6 @@ class Parser {
     return { word: s, defs: out };
   }
 
-  //TODO: improve this code
   private latinToEnglish(word: string): any {
     //Find definition and word formation from Latin word
 
@@ -149,28 +148,21 @@ class Parser {
     // ex: clamaverunt -> clamare
     // doing this here instead of earlier should fix words like salve having the "ve" removed and returning wrong def
     if (out.length === 0) {
-      console.log("entered")
       let split = this.splitEnclitic(word);
       word = split[0];
       out = split[1];
-
-      console.log(`split word: ${word}, split out: ${out}`)
 
       uniqueOut = this.parseUniques(word);
       out = uniqueOut[0];
       isUnique = uniqueOut[1];
 
-      console.log(`unique out: ${out}, is unique: ${isUnique}`)
-
       if (!isUnique) {
         out = this.findForms(word, false);
-        console.log("did normal search")
       }
 
       if (out.length === 0 && this.tricks.switchFirstIOrJ(word) != word) {
         word = this.tricks.switchFirstIOrJ(word);
         out = this.findForms(word, false);
-        console.log("did i/j switch")
       }
     }
 
@@ -386,117 +378,103 @@ class Parser {
     return matchStems;
   }
 
-  private lookupStems(matchStems: any, out: any): any {
-    // Find the word id mentioned in the stem in the dictionary
+  private lookupStems(matchedStems: any, outList: any): any {
+    for (const matchedStem of matchedStems) {
+      const dictWord = this.wordsDict.find(
+        (word) => word.id === matchedStem.st.wid
+      );
 
-    for (let i = 0; i < matchStems.length; i++) {
-      const stem = matchStems[i];
-      for (let i = 0; i < this.wordsDict.length; i++) {
-        const word = this.wordsDict[i];
-        // Lookup by id
-        if (stem.st.wid === word.id) {
-          let wordIsInOut = false;
-          for (let i = 0; i < out.length; i++) {
-            const w = out[i];
-            if (
-              ("id" in w["w"] && word["id"] === w["w"]["id"]) ||
-              w["w"]["orth"] === word["orth"]
-            ) {
-              // It is in the out list already, flag and then check if the stem is already in the stems
-              wordIsInOut = true;
+      if (dictWord) {
+        // Check if the word is already in the out list
+        const wordIsInOut = outList.some(
+          (w: any) =>
+            ("id" in w.w && dictWord.id === w.w.id) ||
+            w.w.orth === dictWord.orth
+        );
 
-              // Ensure the stem is not already in the out word stems
-              let wordIsInOutWordStems = false;
-              for (const st of out[i]["stems"]) {
-                if (st === stem) {
-                  wordIsInOutWordStems = true;
-                  // We have a match, break the loop
-                  break;
-                }
-              }
-
-              if (!wordIsInOutWordStems) {
-                out[i]["stems"].push(stem);
-              }
-              // If we matched a word in the out, break the loop
-              break;
+        // If the word is already in the out list, add the stem to it
+        if (wordIsInOut) {
+          const matchingWord = outList.find(
+            (w: any) =>
+              ("id" in w.w && dictWord.id === w.w.id) ||
+              w.w.orth === dictWord.orth
+          );
+          this.addStemToWord(matchedStem, matchingWord);
+        } 
+        // If the word is not in the out list, add it with the stem
+        else {
+          let tempStem = matchedStem;
+          if (dictWord.pos === "V") {
+            const fourthPart = dictWord.parts[3];
+            if (fourthPart !== matchedStem.st.orth) {
+              tempStem = this.removeExtraInfls(matchedStem, "VPAR");
+            } else {
+              tempStem = this.removeExtraInfls(matchedStem, "V");
             }
           }
-          let tempStem = stem;
-          // If the word isn't in the out yet
-          if (!wordIsInOut) {
-            // Check the VPAR / V relationship
-            if (word["pos"] === "V") {
-              // If the stem doesn't match the 4th principle part, it's not VPAR
-              if (word["parts"].indexOf(stem["st"]["orth"]) === 3) {
-                // Remove "V" infls
-                tempStem = this.removeExtraInfls(stem, "V");
-              } else {
-                // Remove "VPAR" infls
-                tempStem = this.removeExtraInfls(stem, "VPAR");
-              }
-            }
-            out.push({ w: { ...word }, stems: [tempStem] });
-          }
+          outList.push({ w: { ...dictWord }, stems: [tempStem] });
         }
       }
     }
-    return out;
+    return outList;
   }
 
-  private splitEnclitic(s: string): any {
-    //Split enclitic ending from word
-    //!!! look at how working versions do this, and copy
-    let out: any = [];
-
-    // Test the different tackons / packons as specified in addons.ts
-    for (const e of this.addons.tackons) {
-      if (s.endsWith(e.orth)) {
-        // Standardize data format
-        e.form = e.orth;
-
-        // Est exception
-        if (s != "est") {
-          out.push({ w: e, stems: [] });
-          s = s.replace(new RegExp(e.orth + "$"), "");
-        }
+  private addStemToWord(stem: string, word: any) {
+    let wordIsInOutWordStems = false;
+    for (const st of word.stems) {
+      if (st === stem) {
+        wordIsInOutWordStems = true;
         break;
       }
     }
 
-    if (s.startsWith("qu")) {
-      for (const e of this.addons.packons) {
-        if (s.endsWith(e.orth)) {
-          out.push({ w: e });
-          s = s.replace(new RegExp(e.orth + "$"), "");
-          break;
-        }
+    if (!wordIsInOutWordStems) {
+      word.stems.push(stem);
+    }
+  }
+
+  private splitEnclitic(word: string): [string, any[]] {
+    // Test the different tackons / packons as specified in addons.ts
+    let out: any[] = [];
+    let tackon: any;
+
+    for (const enclitic of this.addons.tackons) {
+      if (word.endsWith(enclitic.orth)) {
+        tackon = enclitic;
+        break;
       }
+    }
+
+    if (tackon) {
+      tackon.form = tackon.orth;
+      // Est exception
+      if (word != "est") {
+        out.push({ w: tackon, stems: [] });
+      }
+      word = word.slice(0, word.length - tackon.orth.length);
     } else {
-      for (const e of this.addons.notPackons) {
-        if (s.endsWith(e.orth)) {
-          out.push({ w: e });
-          s = s.replace(new RegExp(e.orth + "$"), "");
+      let packons = word.startsWith("qu")
+        ? this.addons.packons
+        : this.addons.notPackons;
+      for (const enclitic of packons) {
+        if (word.endsWith(enclitic.orth)) {
+          out.push({ w: enclitic });
+          word = word.slice(0, word.length - enclitic.orth.length);
           break;
         }
       }
     }
-    return [s, out];
+
+    return [word, out];
   }
 
   private removeExtraInfls(stem: any, removeType: string = "VPAR"): any {
-    // Make a copy of the stem's inflections
-    const stemInflsCopy = [...stem.infls];
+    // create a new array of inflections that don't match the removeType
+    const filteredInfls = stem.infls.filter(
+      (infl: any) => infl.pos !== removeType
+    );
 
-    // Loop through the copy of inflections and remove any with a matching removeType
-    for (const infl of stemInflsCopy) {
-      if (infl.pos === removeType) {
-        const index = stem.infls.indexOf(infl);
-        stem.infls.splice(index, 1);
-      }
-    }
-
-    return stem;
+    return { ...stem, infls: filteredInfls };
   }
 }
 
