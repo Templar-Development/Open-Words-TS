@@ -55,7 +55,7 @@ class Parser {
     frequency: number;
     compound: number;
     semi: number;
-  }
+  }[];
   formatter: Formatter;
   tricks: Tricks;
 
@@ -216,23 +216,44 @@ class Parser {
     return [out, isUnique];
   }
 
-  private englishToLatin(word: string): any {
+  private englishToLatin(searchWord: string): any {
     // Find Latin word from English definition
+    let listOfWords: any = [];
     let out: any = [];
 
-    // Check against list of uniques
-    for (const unique of this.uniques) {
-      for (const sense of unique.senses) {
-        if (sense.toLowerCase().includes(word.toLowerCase())) {
-          out.push({ w: unique, stems: [] });
-          break;
-        }
+    //TODO: if word cant be found, use old method of finding word (searching in defs)
+    for (const word of this.english) {
+      if (word.orth === searchWord) {
+        listOfWords.push(word)
       }
     }
 
-    // If it's not in the list of uniques
-    if (out.length === 0) {
-      out = this.lookupWord(word);
+    // Most of the time, words are already in the right order
+    // Do testing, if order is fine, remove this
+    //let sortedListOfWords: any = this.weighEnglishWords(listOfWords);
+
+    // if there are more than 6 words in the list, keep the top 6
+    // other words are probably rare or wrong
+    if (listOfWords.length > 6) {
+      listOfWords = listOfWords.slice(0, 6);
+    }
+
+    // lookup the def of the words in the dict, using wid
+    out = this.findEnglishWordDefs(listOfWords);
+
+    return out;
+  }
+
+  private findEnglishWordDefs(listOfWords: any): any {
+    let out: any = [];
+
+    for (const word of listOfWords) {
+      for (const dictLine of this.wordsDict) {
+        if (dictLine.id === word.wid) {
+          out.push({ w: dictLine, stems: [] });
+          break;
+        }
+      }
     }
 
     return out;
