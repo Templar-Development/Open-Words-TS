@@ -10,6 +10,7 @@ import LatinAddons from "./data/addons";
 import Stems from "./data/stemList";
 import Uniques from "./data/uniques";
 import Inflects from "./data/inflects";
+import English from "./data/english";
 
 class Parser {
   stems: (
@@ -46,6 +47,15 @@ class Parser {
         id: number;
       }
   )[];
+  english: {
+    orth: string;
+    wid: number;
+    pos: number;
+    frequencyType: string;
+    frequency: number;
+    compound: number;
+    semi: number;
+  }
   formatter: Formatter;
   tricks: Tricks;
 
@@ -55,6 +65,7 @@ class Parser {
     this.uniques = Uniques;
     this.addons = LatinAddons;
     this.wordsDict = WordsDict;
+    this.english = English;
 
     // Sort by length
     this.stems.sort((a: any, b: any) => a.length - b.length);
@@ -195,7 +206,7 @@ class Parser {
 
     // Check against list of uniques
     for (const unique of this.uniques) {
-      if (unique.orth.toLowerCase().includes(word.toLowerCase())) {
+      if (unique.orth.toLowerCase() === word.toLowerCase()) {
         out.push({ w: unique, stems: [] });
         isUnique = true;
         break;
