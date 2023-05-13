@@ -20,6 +20,70 @@ et
     -- wrong def
     Here is a PREPosition that might also be an ADVerb. This is a very common situation, with the meanings being much the same.
 
+mare, maris:
+    not enough info, need more word gets, stems or something
+
+locus, loci:
+    -- place
+    not enough info, get extra lines or stems idk
+
+rogo:
+    -- ask
+    not enough info
+
+ductus:
+    -- lead
+    not enough info
+
+scitus:
+    -- know
+    not enough info
+
+monstro:
+    -- show
+    not enough info
+
+inventus:
+    -- find
+    wrong def, sort of, dif from whitkaers
+
+do, dare, dedi, datus:
+    -- give
+    not enough info
+    extra lines needed i think
+
+fero, ferre, tuli, latus:
+    -- bring
+    wrong defs / not enough info
+
+claudere:
+    -- close
+    not enough info
+
+versus:
+    -- towards
+    dif def
+
+captus:
+    -- taken
+    not enough info
+
+missus:
+    -- sent
+    not enough info
+
+caecus, caeca, caecum:
+    -- blind / dark
+    not enough info (no dark)
+
+foedus, foeda, foedum
+    -- foul
+    not enough info
+
+geminus, gemina, geminum:
+    -- twin / double
+    not enough info (no double)
+
 pseudochristus
     -- should split prefix (pseudo | false)
     -- then find other word

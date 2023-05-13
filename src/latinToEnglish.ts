@@ -8,6 +8,7 @@ class LatinToEnglish {
     private tricks: any
   ) {}
 
+  //!!! endings of all words are being cut off
   public latinToEnglish(word: string): any {
     //Find definition and word formation from Latin word
 
