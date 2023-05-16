@@ -8,7 +8,7 @@ class LatinToEnglish {
     private tricks: any
   ) {}
 
-  //!!! endings of all words are being cut off
+  //TODO: find the stem of the word too, and use ending in orth list
   public latinToEnglish(word: string): any {
     //Find definition and word formation from Latin word
 

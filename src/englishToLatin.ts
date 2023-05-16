@@ -8,7 +8,7 @@ class EnglishToLatin {
 
     //TODO: if word cant be found, use old method of finding word (searching in defs)
     for (const word of this.english) {
-      if (word.orth === searchWord) {
+      if (word.orth.toLowerCase() === searchWord.toLowerCase()) {
         listOfWords.push(word);
       }
     }
