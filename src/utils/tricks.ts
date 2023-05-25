@@ -2,7 +2,7 @@
  *  Corresponding to Whitaker's Words tricks_package.adb
  */
 
-import Characters from "../data/types/Characters";
+import Characters from "../types/Characters";
 
 type SingleChar = Characters | Uppercase<Characters>;
 
@@ -94,6 +94,22 @@ class Tricks {
     if (word[0] == "j") {
       return (word = "i" + word.slice(1));
     }
+
+    return word;
+  }
+
+  // Treats U and V as the same letter
+  // replace all u with v
+  // if no u, only v, replace all v with u
+  private switchUorV(word: string): string {
+    word = word.toLowerCase();
+
+    if (!word.includes("u") && word.includes("v")) {
+      word = word.replace(/v/g, "u");
+      return word;
+    }
+
+    word = word.replace(/u/g, "v");
 
     return word;
   }

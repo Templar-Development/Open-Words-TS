@@ -14,50 +14,19 @@ import Uniques from "./data/uniques";
 import Inflects from "./data/inflects";
 import English from "./data/english";
 
+import Stem from "./types/Stem";
+import Inflection from "./types/Inflection";
+import Unique from "./types/Unique";
+import LatinDictEntry from "./types/LatinDictEntry";
+import EnglishDictEntry from "./types/EnglishDictEntry";
+
 class Parser {
-  stems: (
-    | { pos: string; form: string; orth: string; n: number[]; wid: number }
-    | { pos: string; form: string; orth: string; n: string[]; wid: number }
-  )[];
-  inflects: {
-    ending: string;
-    pos: string;
-    note: string;
-    n: (string | number)[];
-    form: string;
-  }[];
-  uniques: { orth: string; pos: string; senses: string[] }[];
-  //TODO: Add type for addons
+  stems: Stem[];
+  inflects: Inflection[];
+  uniques: Unique[];
   addons: any;
-  wordsDict: (
-    | {
-        pos: string;
-        n: number[];
-        parts: string[];
-        senses: string[];
-        form: string;
-        orth: string;
-        id: number;
-      }
-    | {
-        pos: string;
-        n: string[];
-        parts: string[];
-        senses: string[];
-        form: string;
-        orth: string;
-        id: number;
-      }
-  )[];
-  english: {
-    orth: string;
-    wid: number;
-    pos: number;
-    frequencyType: string;
-    frequency: number;
-    compound: number;
-    semi: number;
-  }[];
+  wordsDict: LatinDictEntry[];
+  english: EnglishDictEntry[];
   formatter: Formatter;
   tricks: Tricks;
   englishToLatin: EnglishToLatin;
