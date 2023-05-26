@@ -4,6 +4,7 @@ import transMood from "./transMood";
 import transNumber from "./transNumber";
 import transTense from "./transTense";
 import transVoice from "./transVoice";
+import transPOS from "./transPOS";
 
 class Formatter {
   constructor() {}
@@ -123,46 +124,7 @@ class Formatter {
       infl.form = this.formatForm(infl.form, infl.pos);
 
       // Set part of speech
-      switch (infl.pos) {
-        case "N":
-          infl.pos = "noun";
-          break;
-        case "V":
-          infl.pos = "verb";
-          break;
-        case "VPAR":
-          infl.pos = "participle";
-          break;
-        case "ADJ":
-          infl.pos = "adjective";
-          break;
-        case "PREP":
-          infl.pos = "adjective";
-          break;
-        case "PRON":
-          infl.pos = "pronoun";
-          break;
-        case "INTERJ":
-          infl.pos = "interjection";
-          break;
-        case "NUM":
-          infl.pos = "number";
-          break;
-        case "CONJ":
-          infl.pos = "conjunction";
-          break;
-        case "PREP":
-          infl.pos = "preposition";
-          break;
-        case "ADV":
-          infl.pos = "adverb";
-          break;
-        case "INT":
-          infl.pos = "number";
-          break;
-        case "X":
-          infl.pos = "unknown"
-      }
+      infl.pos = transPOS(infl.pos);
     }
     return out;
   }
