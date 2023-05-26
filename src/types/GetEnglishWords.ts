@@ -1,7 +1,6 @@
 import PartOfSpeech from "./PartOfSpeech";
 
-interface GetLatinWords {
-  includeUniques: boolean;
+interface GetEnglishWords {
   minWordLength?: number;
   maxWordLength?: number;
   exactWordLength?: number;
@@ -10,4 +9,4 @@ interface GetLatinWords {
   sortBy?: "alphabetical" | "alphabeticalReverse" | "length" | "lengthReverse";
 }
 
-export default GetLatinWords;
+export default GetEnglishWords;

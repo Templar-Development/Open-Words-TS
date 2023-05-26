@@ -2,7 +2,9 @@
  * Translates dictionary part of speech codes to human-readable form.
  */
 
-const transPOS = (pos: string): string => {
+import PartOfSpeech from "../../types/PartOfSpeech";
+
+const transPOS = (pos: string): PartOfSpeech => {
   switch (pos) {
     case "N":
       pos = "noun";
@@ -44,7 +46,7 @@ const transPOS = (pos: string): string => {
       pos = "unknown";
   }
 
-  return pos;
+  return pos as PartOfSpeech;
 };
 
 export default transPOS;

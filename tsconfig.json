@@ -12,7 +12,8 @@
     "src/data/**/*.ts",
     "src/utils/**/*.ts",
     "src/utils/format/**/*.ts",
-    "./search.ts"
+    "./search.ts",
+    "./getData.ts"
   ],
   "exclude": ["node_modules"]
 }

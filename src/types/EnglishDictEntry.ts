@@ -1,7 +1,7 @@
 interface EnglishDictEntry {
   orth: string;
   wid: number;
-  pos: number;
+  pos: string;
   frequencyType: string;
   frequency: number;
   compound: number;
