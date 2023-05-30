@@ -17,7 +17,7 @@ import Unique from "./types/Unique";
 import LatinDictEntry from "./types/LatinDictEntry";
 import EnglishDictEntry from "./types/EnglishDictEntry";
 
-import transPOS from "./utils/format/transPOS";
+import transPOS from "./utils/keyTranslation/transPOS";
 
 class UseData {
   stems: Stem[];

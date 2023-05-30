@@ -1,10 +1,10 @@
-import transDeclensions from "./transDeclensions";
-import transGender from "./transGender";
-import transMood from "./transMood";
-import transNumber from "./transNumber";
-import transTense from "./transTense";
-import transVoice from "./transVoice";
-import transPOS from "./transPOS";
+import transDeclensions from "./keyTranslation/transDeclensions";
+import transGender from "./keyTranslation/transGender";
+import transMood from "./keyTranslation/transMood";
+import transNumber from "./keyTranslation/transNumber";
+import transTense from "./keyTranslation/transTense";
+import transVoice from "./keyTranslation/transVoice";
+import transPOS from "./keyTranslation/transPOS";
 
 class Formatter {
   constructor() {}

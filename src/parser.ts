@@ -2,7 +2,7 @@
  * Corresponding to Whitaker's Words parse.adb file
  */
 
-import { Formatter } from "./utils/format/formatter";
+import { Formatter } from "./utils/formatter";
 import { Tricks } from "./utils/tricks";
 import { LatinToEnglish } from "./latinToEnglish";
 import { EnglishToLatin } from "./englishToLatin";

@@ -8,7 +8,6 @@ class LatinToEnglish {
     private tricks: any
   ) {}
 
-  //TODO: find the stem of the word too, and use ending in orth list
   public latinToEnglish(word: string): any {
     //Find definition and word formation from Latin word
 
@@ -25,7 +24,6 @@ class LatinToEnglish {
     }
 
     // Some words that start with i can also start with j
-    // not sure if j is possible but it should not affect anything
     // ex: iecit -> jecit
     if (out.length === 0 && this.tricks.switchFirstIOrJ(word) != word) {
       word = this.tricks.switchFirstIOrJ(word);
@@ -170,46 +168,43 @@ class LatinToEnglish {
     return out;
   }
 
-  //TODO: if the stem is the word, also find it, ex: salve | look at whitaker response
-  private checkStems(s: string, infls: any, ensureInfls: boolean): any {
+  private checkStems(word: string, infls: any, ensureInfls: boolean): any {
     /**
      * For each inflection that was a match, remove the inflection from
      * the end of the word string and then check the resulting stem
      * against the list of stems from stemList.ts
      */
-
     let matchStems: any = [];
 
     // For each of the inflections that is a match, strip the inflection from the end of the word
     // Then look up the stripped word (w) in the stems
     for (const infl of infls) {
-      const w = s.replace(new RegExp(`${infl.ending}$`), "");
+      const wordStem = word.replace(new RegExp(`${infl.ending}$`), "");
 
       for (const stem of this.stems) {
-        if (w === stem.orth) {
+        if (wordStem === stem.orth) {
           // If the inflection and stem identify as the same part of speech
           if (
             infl.pos === stem.pos ||
-            (infl.pos === "VPAR" && stem.pos === "V")
+            (infl.pos === "VPAR" && stem.pos === "V") ||
+            (infl.pos === "V" && stem.pos ==="VPAR")
           ) {
             // Ensure the inflections apply to the correct stem decl/conj/etc
             if (infl.n[0] != stem.n[0] && ensureInfls) {
               continue;
             }
             let isInMatchStems = false;
-
             // If this stem is already in the matchStems list, add infl to that stem (if not already an infl in that stem list)
             for (let i = 0; i < matchStems.length; i++) {
               const mst = matchStems[i];
               if (stem === mst.st) {
                 isInMatchStems = true;
-
                 // So the matches a stem in the matchStems. Is it unique to that stem's infls. If so, append it to that stem's infls.
                 let isInStemInfls = false;
                 for (const stemInfl of mst.infls) {
                   if (stemInfl.form === infl.form) {
                     isInStemInfls = true;
-                    // we found a match, stop looking
+                    // match found, stop looking
                     break;
                   }
                 }
