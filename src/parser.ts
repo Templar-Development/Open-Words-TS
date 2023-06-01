@@ -6,6 +6,7 @@ import { Formatter } from "./utils/formatter";
 import { Tricks } from "./utils/tricks";
 import { LatinToEnglish } from "./latinToEnglish";
 import { EnglishToLatin } from "./englishToLatin";
+import { PrinciplePartFinder } from "./utils/principlePartFinder";
 
 import WordsDict from "./data/dictLine";
 import LatinAddons from "./data/addons";
@@ -31,6 +32,7 @@ class Parser {
   tricks: Tricks;
   englishToLatin: EnglishToLatin;
   latinToEnglish: LatinToEnglish;
+  principlePartFinder: PrinciplePartFinder;
 
   constructor() {
     this.stems = Stems;
@@ -49,6 +51,7 @@ class Parser {
     // Support classes
     this.formatter = new Formatter();
     this.tricks = new Tricks();
+    this.principlePartFinder = new PrinciplePartFinder();
     this.englishToLatin = new EnglishToLatin(this.english, this.wordsDict);
     this.latinToEnglish = new LatinToEnglish(this.wordsDict, this.uniques, this.addons, this.stems, this.inflects, this.tricks);
   }
