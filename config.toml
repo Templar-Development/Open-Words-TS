@@ -1,0 +1,22 @@
+# Provides finetuned control over Open Words TS
+
+[parser]
+multiWordTranslation = true
+
+[latinToEnglish]
+outputWordLimit = 1
+tryWithEncliticsFirst = true
+allowTricks=true # if false all bellow overide to false
+treatIandJasSame=true
+treatUandVasSame=true
+romanNumeralTranslation=true
+
+[englishToLatin]
+outputWordLimit = 6
+
+[formatter]
+formatt = true
+usePrinciplePartFinder=true
+takeMultipleWords=true # if false all bellow overide to false
+takeMultipleEnglishWords=true
+takeMultipleLatinWords=true

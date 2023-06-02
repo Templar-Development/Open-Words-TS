@@ -84,6 +84,8 @@ geminus, gemina, geminum:
     -- twin / double
     not enough info (no double)
 
+edere searches as edire
+
 pseudochristus
     -- should split prefix (pseudo | false)
     -- then find other word
