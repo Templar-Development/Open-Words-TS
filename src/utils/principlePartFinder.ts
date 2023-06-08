@@ -152,51 +152,47 @@
 import PrinciplePartFinderData from "../types/PrinciplePartFinderData";
 
 class PrinciplePartFinder {
-  orths: string[];
 
-  constructor() {
-    this.orths = [];
-  }
+  constructor() {}
 
   //TODO: 2 4 needs gender if M add us if type add um
 
   public findPrincipleParts(props: PrinciplePartFinderData): string[] {
     const { pos, type, orth } = props;
-    this.orths = orth;
 
     //TODO: do testing on the group if statemetns, make sure the type[0] and either type[1] must both be true
     if (pos === "N") {
       if (type[0] === 1 && type[1] === 1) {
-        return this.setPrincipleParts(["a", "ae"]);
+        return this.setPrincipleParts(orth, ["a", "ae"]);
       } else if (type[0] === 2 && type[1] === 1) {
-        return this.setPrincipleParts(["us", "i"]);
+        return this.setPrincipleParts(orth, ["us", "i"]);
       } else if (type[0] === 2 && type[1] === 2) {
-        return this.setPrincipleParts(["um", "i"]);
+        return this.setPrincipleParts(orth, ["um", "i"]);
       } else if (type[0] === 2 && type[1] === 3) {
-        return this.setPrincipleParts(["", "i"]);
+        return this.setPrincipleParts(orth, ["", "i"]);
       } else if (type[0] === 2 && type[1] === 5) {
-        return this.setPrincipleParts(["us", ""]); // might need to add an i, not sure
+        return this.setPrincipleParts(orth, ["us", ""]); // might need to add an i, not sure
       } else if ((type[0] === 2 && type[1] === 6) || type[1] === 7) {
-        return this.setPrincipleParts(["os", "i"]);
+        return this.setPrincipleParts(orth, ["os", "i"]);
       } else if (type[0] === 2 && type[1] === 8) {
-        return this.setPrincipleParts(["on", "i"]);
+        return this.setPrincipleParts(orth, ["on", "i"]);
       } else if (type[0] === 2 && type[1] === 9) {
-        return this.setPrincipleParts(["us", "i"]);
+        return this.setPrincipleParts(orth, ["us", "i"]);
       } else if (
         (type[0] === 3 && type[1] === 1) ||
         type[1] === 2 ||
         type[1] === 3 ||
         type[1] === 4
       ) {
-        return this.setPrincipleParts(["", "is"]);
+        return this.setPrincipleParts(orth, ["", "is"]);
       } else if (type[0] === 4 && type[1] === 1) {
-        return this.setPrincipleParts(["us", "us"]);
+        return this.setPrincipleParts(orth, ["us", "us"]);
       } else if (type[0] === 4 && type[1] === 2) {
-        return this.setPrincipleParts(["u", "us"]);
+        return this.setPrincipleParts(orth, ["u", "us"]);
       } else if (type[0] === 4 && type[1] === 3) {
-        return this.setPrincipleParts(["us", "u"]);
+        return this.setPrincipleParts(orth, ["us", "u"]);
       } else if (type[0] === 5 && type[1] === 1) {
-        return this.setPrincipleParts(["es", "ei"]);
+        return this.setPrincipleParts(orth, ["es", "ei"]);
       }
     }
 
@@ -205,30 +201,29 @@ class PrinciplePartFinder {
 
     if (pos === "V" || pos === "VPAR") {
       if (type[0] === 1 && type[1] === 1) {
-        return this.setPrincipleParts(["o", "are", "i", "us"]);
+        return this.setPrincipleParts(orth, ["o", "are", "i", "us"]);
       } else if (type[0] === 3 && type[1] === 1) {
-        return this.setPrincipleParts(["o", "ere", "i", "us"]); // might also have an um ending
+        return this.setPrincipleParts(orth, ["o", "ere", "i", "us"]); // might also have an um ending
       } else if (type[0] === 3 && type[1] === 2) {
-        return this.setPrincipleParts(["o", "re", "i", "us"]);
+        return this.setPrincipleParts(orth, ["o", "re", "i", "us"]);
       } else if (type[0] === 3 && type[0] === 3) {
-        return this.setPrincipleParts(["o", "eri", "i", "us"]);
+        return this.setPrincipleParts(orth, ["o", "eri", "i", "us"]);
       } else if (type[0] === 3 && type[1] === 4) {
-        return this.setPrincipleParts(["o", "ire", "i", "us"]);
+        return this.setPrincipleParts(orth, ["o", "ire", "i", "us"]);
       } else if (type[0] === 5 && type[1] === 2) {
-        this.orths[1] = this.orths[1].substring(0, this.orths[1].length - 1)
-        return this.setPrincipleParts(["um", "esse", "i", ""]);
+        return this.setPrincipleParts(orth, ["um", "esse", "i", ""]);
       } else if (type[0] === 6 && type[1] === 1) {
-        return this.setPrincipleParts(["o", "re", "i", "us"]);
+        return this.setPrincipleParts(orth, ["o", "re", "i", "us"]);
       } else if (type[0] === 6 && type[1] === 2) {
-        return this.setPrincipleParts(["o", "le", "i", ""]);
+        return this.setPrincipleParts(orth, ["o", "le", "i", ""]);
       } else if (type[0] === 7 && type[1] === 1) {
-        return this.setPrincipleParts(["io", "io", "io", ""]); // not sure about 2nd and 3rd
+        return this.setPrincipleParts(orth, ["io", "io", "io", ""]); // not sure about 2nd and 3rd
       } else if (type[0] === 7 && type[1] === 2) {
-        return this.setPrincipleParts(["am", "iam", "", ""]); // not sure about 3rd
+        return this.setPrincipleParts(orth, ["am", "iam", "", ""]); // not sure about 3rd
       } else if (type[0] === 7 && type[1] === 3) {
-        return this.setPrincipleParts(["o", "se", "", ""]);
+        return this.setPrincipleParts(orth, ["o", "se", "", ""]);
       } else if (type[0] === 8 && type[1] === 1) {
-        return this.setPrincipleParts(["o", "are", "i", ""]);
+        return this.setPrincipleParts(orth, ["o", "are", "i", ""]);
       }
     }
 
@@ -236,16 +231,16 @@ class PrinciplePartFinder {
     return orth;
   }
 
-  private setPrincipleParts(endings: string[]): string[] {
-    for (const orth in this.orths) {
-      if (this.orths[orth] === "" || this.orths[orth] === "zzz") {
-        this.orths[orth] = "---";
+  private setPrincipleParts(orths: string[], endings: string[]): string[] {
+    for (const orth in orths) {
+      if (orths[orth] === "" || orths[orth] === "zzz") {
+        orths[orth] = "---";
       } else {
-        this.orths[orth] += endings[orth];
+        orths[orth] += endings[orth];
       }
     }
 
-    return this.orths;
+    return orths;
   }
 }
 
