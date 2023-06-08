@@ -232,15 +232,17 @@ class PrinciplePartFinder {
   }
 
   private setPrincipleParts(orths: string[], endings: string[]): string[] {
+    const orthsWithParts: string[] = [];
+
     for (const orth in orths) {
       if (orths[orth] === "" || orths[orth] === "zzz") {
-        orths[orth] = "---";
+        orthsWithParts.push("---");
       } else {
-        orths[orth] += endings[orth];
+        orthsWithParts.push(orths[orth] + endings[orth]);
       }
     }
 
-    return orths;
+    return orthsWithParts;
   }
 }
 
