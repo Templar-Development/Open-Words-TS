@@ -1,15 +1,18 @@
 class EnglishToLatin {
-  constructor(private english: any, private wordsDict: any) {}
+  private responseLimit: number;
 
-  public englishToLatin(searchWord: string): any {
+  constructor(private english: any[], private wordsDict: any[]) {
+    this.responseLimit = 6;
+  }
+
+  public englishToLatin(word: string): any {
     // Find Latin word from English definition
-    let listOfWords: any = [];
-    let out: any = [];
+    let listOfWords: any[] = [];
+    let out: any[] = [];
 
-    //TODO: if word cant be found, use old method of finding word (searching in defs)
-    for (const word of this.english) {
-      if (word.orth.toLowerCase() === searchWord.toLowerCase()) {
-        listOfWords.push(word);
+    for (const line of this.english) {
+      if (line.orth.toLowerCase() === word.toLowerCase()) {
+        listOfWords.push(line);
       }
     }
 
@@ -20,8 +23,8 @@ class EnglishToLatin {
 
     // if there are more than 6 words in the list, keep the top 6
     // other words are probably rare/irrelevant or wrong
-    if (listOfWords.length > 6) {
-      listOfWords = listOfWords.slice(0, 6);
+    if (listOfWords.length > this.responseLimit) {
+      listOfWords = listOfWords.slice(0, this.responseLimit);
     }
 
     // lookup the def of the words in the dict, using wid
@@ -30,22 +33,20 @@ class EnglishToLatin {
     return out;
   }
 
-  private weighWords(listOfWords: any): any {
+  private weighWords(listOfWords: any[]): any[] {
     // Sorts words as specified in english.ts
 
     listOfWords.sort((a: any, b: any) => {
-      const aVal = a.frequency + a.compound - a.semi;
-      const bVal = b.frequency + b.compound - b.semi;
-      return bVal - aVal;
+      return this.calculateTrueFrequency(b) - this.calculateTrueFrequency(a);
     });
 
     return listOfWords;
   }
 
-  private removeDuplicateWords(data: any): any {
+  private removeDuplicateWords(listOfWords: any[]): any[] {
     const entriesMap = new Map<string, any>();
 
-    for (const entry of data) {
+    for (const entry of listOfWords) {
       const key = `${entry.wid}-${this.calculateTrueFrequency(entry)}`;
       const existingEntry = entriesMap.get(key);
       if (!existingEntry || entry.trueFrequency < existingEntry.trueFrequency) {
@@ -60,7 +61,7 @@ class EnglishToLatin {
     return word.frequency + word.compound - word.semi;
   }
 
-  private findEnglishWordDefs(listOfWords: any): any {
+  private findEnglishWordDefs(listOfWords: any[]): any[] {
     return listOfWords
       .map((word: any) => {
         const foundDictLine = this.wordsDict.find(

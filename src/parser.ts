@@ -49,11 +49,11 @@ class Parser {
     this.inflects.sort((a: any, b: any) => a.ending.length - b.ending.length);
 
     // Support classes
-    this.formatter = new Formatter();
     this.tricks = new Tricks();
     this.principlePartFinder = new PrinciplePartFinder();
     this.englishToLatin = new EnglishToLatin(this.english, this.wordsDict);
     this.latinToEnglish = new LatinToEnglish(this.wordsDict, this.uniques, this.addons, this.stems, this.inflects, this.tricks);
+    this.formatter = new Formatter(this.principlePartFinder);
   }
 
   public parseLine(
@@ -69,9 +69,8 @@ class Parser {
     let words = line.split(" ");
 
     for (let i = 0; i < words.length; i++) {
-      let word = words[i];
-      if (word.length > 0) {
-        out.push(this.parse(word, direction, formatted));
+      if (words[i].length > 0) {
+        out.push(this.parse(words[i], direction, formatted));
       }
     }
 
@@ -79,7 +78,7 @@ class Parser {
   }
 
   public parse(
-    inputString: string,
+    word: string,
     direction: "lte" | "etl",
     formatted: boolean
   ): any {
@@ -92,13 +91,11 @@ class Parser {
 
     let out: any = [];
 
-    let s = inputString;
-
     //do lookup based on parse direction
     if (direction === "lte") {
-      out = this.latinToEnglish.latinToEnglish(s);
+      out = this.latinToEnglish.latinToEnglish(word);
     } else if (direction === "etl") {
-      out = this.englishToLatin.englishToLatin(s);
+      out = this.englishToLatin.englishToLatin(word);
     } else {
       throw new Error("Invalid direction");
     }
@@ -107,7 +104,7 @@ class Parser {
       out = this.formatter.formatOutput(out);
     }
 
-    return { word: s, defs: out };
+    return { word: word, defs: out };
   }
 }
 

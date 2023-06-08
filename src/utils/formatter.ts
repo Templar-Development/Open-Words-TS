@@ -7,7 +7,7 @@ import transVoice from "./keyTranslation/transVoice";
 import transPOS from "./keyTranslation/transPOS";
 
 class Formatter {
-  constructor() {}
+  constructor(private PrinciplePartFinder: any) {}
 
   //TODO add format types
   public formatOutput(out: any[], type: string = "condensed") {
@@ -17,9 +17,29 @@ class Formatter {
       let def: any = {
         orth: [],
         senses: word["w"]["senses"],
-        infls: []
+        infls: [],
+        info: {
+          id: "",
+          type: "",
+          pos: ""
+        }
       };
 
+      if (word["w"]["id"] != undefined) {
+        def.info.id = word["w"]["id"];
+      } else if (word["w"]["wid"] != undefined) {
+        def.info.id = word["w"]["wid"];
+      }
+
+      if (word["w"]["n"] != undefined) {
+        def.info.type = word["w"]["n"];
+      }
+
+      if (word["w"]["pos"] != undefined) {
+        def.info.pos = word["w"]["pos"];
+      }
+
+      //!!! maybe can remove this do testing. This might be able to be replaced with principlePartFinder
       // Format the orth of the new object
       if ("parts" in word["w"]) {
         def.orth = word["w"]["parts"];
@@ -74,6 +94,16 @@ class Formatter {
       // Format the morphological data for the word forms into a more useful output
       def = this.formatMorph(def);
 
+      // Find the principle parts of the word
+      let orth = def["orth"];
+      let pos = def["info"]["pos"];
+      let type = def["info"]["type"];
+
+      if (pos == "V" || pos == "VPAR" || pos == "N" || pos == "ADJ") {
+        let principleParts = this.PrinciplePartFinder.findPrincipleParts({pos, type, orth});
+        def.orth = principleParts;
+      }
+
       cleanOutput.push(def);
     }
 
@@ -100,7 +130,12 @@ class Formatter {
       const formattedDef: any = {
         orth: word.orth,
         senses: word.senses,
-        infls: []
+        infls: [],
+        info: {
+          id: word.info.id,
+          type: word.info.type,
+          pos: word.info.pos
+        }
       };
 
       const inflMap = new Map<string, any>();
@@ -214,12 +249,12 @@ class Formatter {
   public sanitize(string: string): string {
     //sanitize the input string from all punct and numbers, make lowercase
 
-    let s = string.toLowerCase();
-    s = s.replace(/[^a-z ]/g, "");
-    s = s.replace(/[0-9]/g, "");
-    s = s.replace(/\s+/g, " ");
+    let sanitizedString = string.toLowerCase();
+    sanitizedString = sanitizedString.replace(/[^a-z ]/g, "");
+    sanitizedString = sanitizedString.replace(/[0-9]/g, "");
+    sanitizedString = sanitizedString.replace(/\s+/g, " ");
 
-    return s;
+    return sanitizedString;
   }
 }
 

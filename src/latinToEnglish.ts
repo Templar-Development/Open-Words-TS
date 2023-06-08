@@ -8,6 +8,7 @@ class LatinToEnglish {
     private tricks: any
   ) {}
 
+  //TODO: try running without stopping if isUnique
   public latinToEnglish(word: string): any {
     //Find definition and word formation from Latin word
 
@@ -23,11 +24,13 @@ class LatinToEnglish {
       out = this.findForms(word, false);
     }
 
+    //!!! instead of updating actual word, a copy is created that is switched, to not break splitEnclitic parsing.
     // Some words that start with i can also start with j
     // ex: iecit -> jecit
+    // checking if return is word, because if word does not start with I or J, original word is returned, making the parsing not needed.
     if (out.length === 0 && this.tricks.switchFirstIOrJ(word) != word) {
-      word = this.tricks.switchFirstIOrJ(word);
-      out = this.findForms(word, false);
+      let modifiedWord = this.tricks.switchFirstIOrJ(word);
+      out = this.findForms(modifiedWord, false);
     }
 
     // If nothing is found, try removing enclitics and try again
@@ -47,8 +50,8 @@ class LatinToEnglish {
       }
 
       if (out.length === 0 && this.tricks.switchFirstIOrJ(word) != word) {
-        word = this.tricks.switchFirstIOrJ(word);
-        out = this.findForms(word, false);
+        let modifiedWord = this.tricks.switchFirstIOrJ(word);
+        out = this.findForms(modifiedWord, false);
       }
     }
 
@@ -91,13 +94,13 @@ class LatinToEnglish {
     return [out, isUnique];
   }
 
-  private findForms(s: string, reduced: boolean): any {
+  private findForms(word: string, reduced: boolean): any {
     let infls: any = [];
     let out: any = [];
 
     // Check against list of inflections
     for (const infl of this.inflects) {
-      if (s.endsWith(infl.ending)) {
+      if (word.endsWith(infl.ending)) {
         // If the longest inflection has been found, stop looking
         if (infls.length > 0 && infls[0].ending.length > infl.ending.length) {
           break;
@@ -108,28 +111,28 @@ class LatinToEnglish {
     }
 
     // Run against the list of stems
-    let stems = this.checkStems(s, infls, true);
+    let stems = this.checkStems(word, infls, true);
     // If no stems were found, try again without ensuring infls
     // allows for words that end with erunt and similar cases
     // ex: clamaverunt return null without this
     if (stems.length === 0) {
-      stems = this.checkStems(s, infls, false);
+      stems = this.checkStems(word, infls, false);
     }
 
     out = this.lookupStems(stems, out);
 
     if (out.length === 0 && !reduced) {
-      let rOut: any = this.reduce(s);
+      let reducedOut: any = this.reduce(word);
       // if there is more data after reducing, extend out
-      if (rOut) {
-        out = out.concat(rOut);
+      if (reducedOut) {
+        out = out.concat(reducedOut);
       }
     }
 
     return out;
   }
 
-  private reduce(s: string): any {
+  private reduce(word: string): any {
     // Reduce the stem with suffixes and try again
 
     let out: any = [];
@@ -137,22 +140,22 @@ class LatinToEnglish {
 
     // For each inflection match, check prefixes and suffixes
     for (const prefix of this.addons.prefixes) {
-      if (s.startsWith(prefix.orth)) {
-        s = s.replace(new RegExp(`^${prefix.orth}`), "");
+      if (word.startsWith(prefix.orth)) {
+        word = word.replace(new RegExp(`^${prefix.orth}`), "");
         out.push({ w: prefix, stems: [], addon: "prefix" });
         break;
       }
     }
 
     for (const suffix of this.addons.suffixes) {
-      if (s.endsWith(suffix.orth)) {
-        s = s.replace(new RegExp(`${suffix.orth}$`), "");
+      if (word.endsWith(suffix.orth)) {
+        word = word.replace(new RegExp(`${suffix.orth}$`), "");
         out.push({ w: suffix, stems: [], addon: "suffix" });
         break;
       }
     }
 
-    out = this.findForms(s, true);
+    out = this.findForms(word, true);
 
     // Has reducing input string given us useful data?
     for (const word of out) {
@@ -225,7 +228,7 @@ class LatinToEnglish {
     return matchStems;
   }
 
-  private lookupStems(matchedStems: any, outList: any): any {
+  private lookupStems(matchedStems: any, out: any): any {
     for (const matchedStem of matchedStems) {
       const dictWord = this.wordsDict.find(
         (word: any) => word.id === matchedStem.st.wid
@@ -233,7 +236,7 @@ class LatinToEnglish {
 
       if (dictWord) {
         // Check if the word is already in the out list
-        const wordIsInOut = outList.some(
+        const wordIsInOut = out.some(
           (w: any) =>
             ("id" in w.w && dictWord.id === w.w.id) ||
             w.w.orth === dictWord.orth
@@ -241,7 +244,7 @@ class LatinToEnglish {
 
         // If the word is already in the out list, add the stem to it
         if (wordIsInOut) {
-          const matchingWord = outList.find(
+          const matchingWord = out.find(
             (w: any) =>
               ("id" in w.w && dictWord.id === w.w.id) ||
               w.w.orth === dictWord.orth
@@ -259,11 +262,12 @@ class LatinToEnglish {
               tempStem = this.removeExtraInfls(matchedStem, "V");
             }
           }
-          outList.push({ w: { ...dictWord }, stems: [tempStem] });
+          //!!!: test what happens if matched stem is returned
+          out.push({ w: { ...dictWord }, stems: [tempStem] });
         }
       }
     }
-    return outList;
+    return out;
   }
 
   private addStemToWord(stem: string, word: any) {
@@ -280,6 +284,7 @@ class LatinToEnglish {
     }
   }
 
+  //??? see what this does, log out the enclitic.orth
   private splitEnclitic(word: string): [string, any[]] {
     // Test the different tackons / packons as specified in addons.ts
     let out: any[] = [];
@@ -298,6 +303,7 @@ class LatinToEnglish {
       if (word != "est") {
         out.push({ w: tackon, stems: [] });
       }
+      //!!!:log after this
       word = word.slice(0, word.length - tackon.orth.length);
     } else {
       let packons = word.startsWith("qu")
