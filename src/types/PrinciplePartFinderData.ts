@@ -1,7 +1,7 @@
 interface PrinciplePartFinderData {
     pos: string;
-    n: [number, number];
-    parts: string[];
+    type: [number, number];
+    orth: string[];
 }
 
 export default PrinciplePartFinderData;

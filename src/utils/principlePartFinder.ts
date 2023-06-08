@@ -1,38 +1,38 @@
 /**
- * How principle parts are found:
+ * How principle orth are found:
  *
- * All first declension nouns  - N 1 1
+ * All first declension nouns  - type 1 1
  * Ex: aqu aqu  =>  aqua aquae
  *
- * Second declension neuter nouns - N 2 2
+ * Second declension neuter nouns - type 2 2
  * Ex: bell bell => bellum belli
  *
- * Second declension nouns in "er" whether of not the "er" in base - N 2 3
+ * Second declension nouns in "er" whether of not the "er" in base - type 2 3
  * Ex: puer puer => puer pueri
  *
- * Early (BC) 2nd declension nouns in ius/ium (not filius-like)  - N 2 4
+ * Early (BC) 2nd declension nouns in ius/ium (not filius-like)  - type 2 4
  * for the most part formed GEN S in 'i', not 'ii'   --  G+L 33 R 1
  * Dictionaries often show as ...(i)i
- * N 2 4 uses GENDER discrimination to reduce to single VAR
+ * type 2 4 uses GENDER discrimination to reduce to single VAR
  * Ex: radius rad(i)i  => radi radi        M
- * Ex: atrium atr(i)i  =>  atri atri       N
+ * Ex: atrium atr(i)i  =>  atri atri       type
  *
- * Mostly used for names - N 2 5
+ * Mostly used for names - type 2 5
  * Ex: aegidi aegidi => aegidius aegidi
  *
- * Mostly used for plant names - N 2 6
+ * Mostly used for plant names - type 2 6
  * Ex: adips adips => adipsos adipsi
  *
- * Various very rare nouns - N 2 7
+ * Various very rare nouns - type 2 7
  * EX: chelys chely => chelysos chelysi
  *
- * Various rare nouns - N 2 8
+ * Various rare nouns - type 2 8
  * Ex: butyr butyr => butyron butyri
  *
- * Only one word - N 2 9
+ * Only one word - type 2 9
  * Ex: Panth Panth => Panthus Panthi
  *
- * Third declension M or F nouns whose stems end in a consonant - N 3 1
+ * Third declension M or F nouns whose stems end in a consonant - type 3 1
  * Ex: rex reg  => rex regis
  * Ex: soror soror  => soror sororis
  * Ex: frater fratr  => frater fratris
@@ -41,11 +41,11 @@
  * Ex: legio legion  => legio legionis
  * EX: varietas varietat  => varietas varietatis
  *
- * Third declension  N nouns with stems ending in a consonant - N 3 2
+ * Third declension  type nouns with stems ending in a consonant - type 3 2
  * Ex: nomen nomen  => nomen nomenis
  * Ex: iter itiner  => iter itineris
  *
- * Third declension nouns  I-stems (M + F)     - N 3 3
+ * Third declension nouns  I-stems (M + F)     - type 3 3
  * Ex: hostis host  => hostis hostis
  * Ex: finis fin  => finis finis
  * Consonant i-stems
@@ -53,24 +53,24 @@
  * Ex: mons mont  => mons montis
  * Also use this for present participles (-ns) used as substantives in M + F
  *
- * Third declension nouns  I-stems (N)    - N 3 4
+ * Third declension nouns  I-stems (type)    - type 3 4
  * Ex: mare mar  => mare maris                    --  ending in "e"
  * Ex: animal animal  => animal animalis          --  ending in "al"
  * Ex: exemplar exemplar  => exemplar exemplaris  --  ending in "ar"
- * Also use this for present participles (-ns) used as substantives in N
+ * Also use this for present participles (-ns) used as substantives in type
  *
- * Fourth declension nouns M + F in "us"  - N 4 1
+ * Fourth declension nouns M + F in "us"  - type 4 1
  * Ex: pass pass  => passus passus
  * Ex: man man => manus manus
  *
- * Fourth declension nouns N in "u"  - N 4 2
+ * Fourth declension nouns type in "u"  - type 4 2
  * Ex: gen gen  => genu genus
  * Ex: corn corn  => cornu cornus
  *
- * Jesus - N 4 3
+ * Jesus - type 4 3
  * Ex: jes jes => jesus jesu
  *
- * All fifth declension nouns  - N 5 1
+ * All fifth declension nouns  - type 5 1
  * Ex: di di  => dies diei
  * Ex: r r  => res rei
  *
@@ -147,102 +147,103 @@
  * Ex: poss pot potu zzz => possum posse potui
  */
 
+//TODO: add new verbs to docs
+
 import PrinciplePartFinderData from "../types/PrinciplePartFinderData";
 
 class PrinciplePartFinder {
   constructor() {}
 
-  //TODO: 2 4 needs gender if M add us if N add um
+  //TODO: 2 4 needs gender if M add us if type add um
 
   public findPrincipleParts(props: PrinciplePartFinderData): string[] {
-    const { pos, n, parts } = props;
-    let principleParts: string[] = [];
+    const { pos, type, orth } = props;
 
     //!!!: return after a match is found, it is not possible to have more than 1 per word list.
-    //TODO: do testing on the group if statemetns, make sure the n[0] and either n[1] must both be true
+    //TODO: do testing on the group if statemetns, make sure the type[0] and either type[1] must both be true
     if (pos === "N") {
-      if (n[0] === 1 && n[1] === 1) {
-        principleParts.push(parts[0] + "a");
-        principleParts.push(parts[1] + "ae");
-      } else if (n[0] === 2 && n[1] === 1) {
-        principleParts.push(parts[0] + "us");
-        principleParts.push(parts[1] + "i");
-      } else if (n[0] === 2 && n[1] === 2) {
-        principleParts.push(parts[0] + "um");
-        principleParts.push(parts[1] + "i");
-      } else if (n[0] === 2 && n[1] === 3) {
-        principleParts.push(parts[0]);
-        principleParts.push(parts[1] + "i");
-      } else if (n[0] === 2 && n[1] === 5) {
-        principleParts.push(parts[0] + "us");
-        principleParts.push(parts[1]); // might need to add an i, not sure
-      } else if ((n[0] === 2 && n[1] === 6) || n[1] === 7) {
-        principleParts.push(parts[0] + "os");
-        principleParts.push(parts[1] + "i");
-      } else if (n[0] === 2 && n[1] === 8) {
-        principleParts.push(parts[0] + "on");
-        principleParts.push(parts[1] + "i");
-      } else if (n[0] === 2 && n[1] === 9) {
-        principleParts.push(parts[0] + "us");
-        principleParts.push(parts[1] + "i");
+      if (type[0] === 1 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["a", "ae"]);
+      } else if (type[0] === 2 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["us", "i"]);
+      } else if (type[0] === 2 && type[1] === 2) {
+        return this.setPrincipleParts(orth, ["um", "i"]);
+      } else if (type[0] === 2 && type[1] === 3) {
+        return this.setPrincipleParts(orth, ["", "i"]);
+      } else if (type[0] === 2 && type[1] === 5) {
+        return this.setPrincipleParts(orth, ["us", ""]); // might need to add an i, not sure
+      } else if ((type[0] === 2 && type[1] === 6) || type[1] === 7) {
+        return this.setPrincipleParts(orth, ["os", "i"]);
+      } else if (type[0] === 2 && type[1] === 8) {
+        return this.setPrincipleParts(orth, ["on", "i"]);
+      } else if (type[0] === 2 && type[1] === 9) {
+        return this.setPrincipleParts(orth, ["us", "i"]);
       } else if (
-        (n[0] === 3 && n[1] === 1) ||
-        n[1] === 2 ||
-        n[1] === 3 ||
-        n[1] === 4
+        (type[0] === 3 && type[1] === 1) ||
+        type[1] === 2 ||
+        type[1] === 3 ||
+        type[1] === 4
       ) {
-        principleParts.push(parts[0]);
-        principleParts.push(parts[1] + "is");
-      } else if (n[0] === 4 && n[1] === 1) {
-        principleParts.push(parts[0] + "us");
-        principleParts.push(parts[1] + "us");
-      } else if (n[0] === 4 && n[1] === 2) {
-        principleParts.push(parts[0] + "u");
-        principleParts.push(parts[1] + "us");
-      } else if (n[0] === 4 && n[1] === 3) {
-        principleParts.push(parts[0] + "us");
-        principleParts.push(parts[1] + "u");
-      } else if (n[0] === 5 && n[1] === 1) {
-        principleParts.push(parts[0] + "es");
-        principleParts.push(parts[1] + "ei");
+        return this.setPrincipleParts(orth, ["", "is"]);
+      } else if (type[0] === 4 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["us", "us"]);
+      } else if (type[0] === 4 && type[1] === 2) {
+        return this.setPrincipleParts(orth, ["u", "us"]);
+      } else if (type[0] === 4 && type[1] === 3) {
+        return this.setPrincipleParts(orth, ["us", "u"]);
+      } else if (type[0] === 5 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["es", "ei"]);
       }
     }
 
     if (pos === "ADJ") {
     }
 
+    //TODO: add placeholder text for zzz
     if (pos === "V" || pos === "VPAR") {
-      if (n[0] === 1 && n[1] === 1) {
-        principleParts.push(parts[0] + "o");
-        principleParts.push(parts[1] + "are");
-        if (parts[2] !== "zzz") principleParts.push(parts[2] + "i");
-        if (parts[3] !== "zzz") principleParts.push(parts[3] + "us");
-      } else if (n[0] === 3 && n[1] === 2) {
-        principleParts.push(parts[0] + "o");
-        principleParts.push(parts[1] + "re");
-        if (parts[2] !== "zzz") principleParts.push(parts[2] + "i");
-        if (parts[3] !== "zzz") principleParts.push(parts[3] + "us");
-      } else if (n[0] === 3 && n[0] === 3) {
-        principleParts.push(parts[0] + "o");
-        principleParts.push(parts[1] + "eri");
-        if (parts[2] !== "zzz") principleParts.push(parts[2] + "i");
-        if (parts[3] !== "zzz") principleParts.push(parts[3] + "us");
-      } else if (n[0] === 3 && n[1] === 4) {
-        principleParts.push(parts[0] + "o");
-        principleParts.push(parts[1] + "ire");
-        if (parts[2] !== "zzz") principleParts.push(parts[2] + "i");
-        if (parts[3] !== "zzz") principleParts.push(parts[3] + "us");
-      } else if (n[0] === 5 && n[1] === 2) {
-        principleParts.push(parts[0] + "um");
-        principleParts.push(
-          parts[1].substring(0, parts[1].length - 1) + "esse"
-        );
-        if (parts[2] !== "zzz") principleParts.push(parts[2] + "i");
-        if (parts[3] !== "zzz") principleParts.push(parts[3]);
+      if (type[0] === 1 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["o", "are", "i", "us"]);
+      } else if (type[0] === 3 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["o", "ere", "i", "us"]); // might also have an um ending
+      } else if (type[0] === 3 && type[1] === 2) {
+        return this.setPrincipleParts(orth, ["o", "re", "i", "us"]);
+      } else if (type[0] === 3 && type[0] === 3) {
+        return this.setPrincipleParts(orth, ["o", "eri", "i", "us"]);
+      } else if (type[0] === 3 && type[1] === 4) {
+        return this.setPrincipleParts(orth, ["o", "ire", "i", "us"]);
+      } else if (type[0] === 5 && type[1] === 2) {
+        let modifiedOrth = orth
+        modifiedOrth[1] = modifiedOrth[1].substring(0, modifiedOrth[1].length - 1)
+        return this.setPrincipleParts(modifiedOrth, ["um", "esse", "i", ""]);
+      } else if (type[0] === 6 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["o", "re", "i", "us"]);
+      } else if (type[0] === 6 && type[1] === 2) {
+        return this.setPrincipleParts(orth, ["o", "le", "i", ""]);
+      } else if (type[0] === 7 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["io", "io", "io", ""]); // not sure about 2nd and 3rd
+      } else if (type[0] === 7 && type[1] === 2) {
+        return this.setPrincipleParts(orth, ["am", "iam", "", ""]); // not sure about 3rd
+      } else if (type[0] === 7 && type[1] === 3) {
+        return this.setPrincipleParts(orth, ["o", "se", "", ""]);
+      } else if (type[0] === 8 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["o", "are", "i", ""]);
       }
     }
 
-    return principleParts;
+    // if no match is found return the original orth
+    return orth;
+  }
+
+  private setPrincipleParts(orths: string[], endings: string[]): string[] {
+    for (const orth in orths) {
+      if (orths[orth] === "zzz") {
+        orths[orth] = "---";
+      } else {
+        orths[orth] += endings[orth];
+      }
+    }
+
+    return orths;
   }
 }
 
