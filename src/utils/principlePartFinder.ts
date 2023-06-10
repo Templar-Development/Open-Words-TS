@@ -199,11 +199,12 @@ class PrinciplePartFinder {
     if (pos === "ADJ") {
     }
 
+    //TODO: finish starting verbs, 2 1
     if (pos === "V" || pos === "VPAR") {
       if (type[0] === 1 && type[1] === 1) {
         return this.setPrincipleParts(orth, ["o", "are", "i", "us"]);
       } else if (type[0] === 3 && type[1] === 1) {
-        return this.setPrincipleParts(orth, ["o", "ere", "i", "us"]); // might also have an um ending
+        return this.setPrincipleParts(orth, ["o", "ere", "i", "us"]);
       } else if (type[0] === 3 && type[1] === 2) {
         return this.setPrincipleParts(orth, ["o", "re", "i", "us"]);
       } else if (type[0] === 3 && type[0] === 3) {
@@ -217,13 +218,19 @@ class PrinciplePartFinder {
       } else if (type[0] === 6 && type[1] === 2) {
         return this.setPrincipleParts(orth, ["o", "le", "i", ""]);
       } else if (type[0] === 7 && type[1] === 1) {
-        return this.setPrincipleParts(orth, ["io", "io", "io", ""]); // not sure about 2nd and 3rd
+        return this.setPrincipleParts(orth, ["o", "", "", ""]);
       } else if (type[0] === 7 && type[1] === 2) {
-        return this.setPrincipleParts(orth, ["am", "iam", "", ""]); // not sure about 3rd
+        return this.setPrincipleParts(orth, ["am", "iam", "", ""]);
       } else if (type[0] === 7 && type[1] === 3) {
         return this.setPrincipleParts(orth, ["o", "se", "", ""]);
       } else if (type[0] === 8 && type[1] === 1) {
         return this.setPrincipleParts(orth, ["o", "are", "i", ""]);
+      } else if (type[0] === 8 && type[1] === 2) {
+        return this.setPrincipleParts(orth, ["o", "ere", "", ""]);
+      } else if (type[0] === 8 && type[1] === 3) {
+        return this.setPrincipleParts(orth, ["o", "ere", "i", ""]);
+      } else if (type[0] === 9 && type[1] === 9) {
+        return this.setPrincipleParts(orth, ["", "", "", ""]);
       }
     }
 
@@ -233,6 +240,10 @@ class PrinciplePartFinder {
 
   private setPrincipleParts(orths: string[], endings: string[]): string[] {
     const orthsWithParts: string[] = [];
+
+    if (endings.every((ending) => ending === "")) {
+      return [`${orths[0]} | undeclined`]
+    }
 
     for (const orth in orths) {
       if (orths[orth] === "" || orths[orth] === "zzz") {
