@@ -154,6 +154,7 @@ import PrinciplePartFinderData from "../types/PrinciplePartFinderData";
 class PrinciplePartFinder {
 
   constructor() {}
+  // optomize, all verbs 4 parts end in us, if they have 1
 
   //TODO: 2 4 needs gender if M add us if type add um
 
@@ -193,6 +194,10 @@ class PrinciplePartFinder {
         return this.setPrincipleParts(orth, ["us", "u"]);
       } else if (type[0] === 5 && type[1] === 1) {
         return this.setPrincipleParts(orth, ["es", "ei"]);
+      } else if (type[0] === 9 && type[1] === 8) {
+        return this.setPrincipleParts(orth, ["", ""], "abbreviation");
+      } else if (type[0] === 9 && type[1] === 9) {
+        return this.setPrincipleParts(orth, ["", ""], "undeclined");
       }
     }
 
@@ -203,6 +208,8 @@ class PrinciplePartFinder {
     if (pos === "V" || pos === "VPAR") {
       if (type[0] === 1 && type[1] === 1) {
         return this.setPrincipleParts(orth, ["o", "are", "i", "us"]);
+      } else if (type[0] === 2 && type[1] === 1) {
+        return this.setPrincipleParts(orth, ["eo", "ere", "i", "us"]);
       } else if (type[0] === 3 && type[1] === 1) {
         return this.setPrincipleParts(orth, ["o", "ere", "i", "us"]);
       } else if (type[0] === 3 && type[1] === 2) {
@@ -230,7 +237,7 @@ class PrinciplePartFinder {
       } else if (type[0] === 8 && type[1] === 3) {
         return this.setPrincipleParts(orth, ["o", "ere", "i", ""]);
       } else if (type[0] === 9 && type[1] === 9) {
-        return this.setPrincipleParts(orth, ["", "", "", ""]);
+        return this.setPrincipleParts(orth, ["", "", "", ""], "undeclined");
       }
     }
 
@@ -238,11 +245,11 @@ class PrinciplePartFinder {
     return orth;
   }
 
-  private setPrincipleParts(orths: string[], endings: string[]): string[] {
+  private setPrincipleParts(orths: string[], endings: string[], specialCase?: string): string[] {
     const orthsWithParts: string[] = [];
 
     if (endings.every((ending) => ending === "")) {
-      return [`${orths[0]} | undeclined`]
+      return [`${orths[0]} | ${specialCase}`]
     }
 
     for (const orth in orths) {
