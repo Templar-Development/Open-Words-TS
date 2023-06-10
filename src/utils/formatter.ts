@@ -4,7 +4,12 @@ import transMood from "./keyTranslation/transMood";
 import transNumber from "./keyTranslation/transNumber";
 import transTense from "./keyTranslation/transTense";
 import transVoice from "./keyTranslation/transVoice";
+import transVerb from "./keyTranslation/transVerb";
 import transPOS from "./keyTranslation/transPOS";
+
+//Words with less infls should be first
+//More storting, order should be nouns then verbs, then everything else
+//If the exact search word is in the orth list, other words should be removed
 
 class Formatter {
   constructor(private PrinciplePartFinder: any) {}
@@ -21,6 +26,7 @@ class Formatter {
         info: {
           id: "",
           type: "",
+          gender: "",
           pos: ""
         }
       };
@@ -33,6 +39,12 @@ class Formatter {
 
       if (word["w"]["n"] != undefined) {
         def.info.type = word["w"]["n"];
+      }
+
+      if (word["w"]["form"] != undefined) {
+        let from = word["w"]["form"];
+        let formArray = from.split(" ");
+        def.info.gender = formArray[2];
       }
 
       if (word["w"]["pos"] != undefined) {
@@ -98,11 +110,20 @@ class Formatter {
       let orth = def["orth"];
       let pos = def["info"]["pos"];
       let type = def["info"]["type"];
+      let gender = def["info"]['gender']
 
       if (pos == "V" || pos == "VPAR" || pos == "N" || pos == "ADJ") {
-        let principleParts = this.PrinciplePartFinder.findPrincipleParts({pos, type, orth});
+        let principleParts = this.PrinciplePartFinder.findPrincipleParts({pos, type, gender, orth});
         def.orth = principleParts;
       }
+
+      if (pos == "V" || pos == "VPAR") {
+        def.info.gender = transVerb(gender);
+      } else if (pos == "N") {
+        def.info.gender = transGender(gender);
+      }
+
+      def.info.pos = transPOS(pos);
 
       cleanOutput.push(def);
     }
@@ -134,6 +155,7 @@ class Formatter {
         info: {
           id: word.info.id,
           type: word.info.type,
+          gender: word.info.gender,
           pos: word.info.pos
         }
       };
