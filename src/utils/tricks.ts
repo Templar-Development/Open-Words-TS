@@ -1,56 +1,20 @@
-/**
- *  Corresponding to Whitaker's Words tricks_package.adb
- */
-
-import Characters from "../types/Characters";
-
-type SingleChar = Characters | Uppercase<Characters>;
+type Characters = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z";
 
 class Tricks {
   constructor() {}
 
-  public isAVowel(character: SingleChar): boolean {
-    let lowerCaseCharacter = character.toLowerCase();
-
-    // Y is a vowel if it does not come before another vowel
-
-    switch (lowerCaseCharacter) {
-      case "a":
-      case "e":
-      case "i":
-      case "o":
-      case "u":
-      case "y":
-        return true;
-      default:
-        return false;
-    }
+  private isAVowel(character: Characters): boolean {
+    const lowerCaseCharacter: string = character.toLowerCase();
+    return /^[aeiou]$/.test(lowerCaseCharacter);
   }
 
-  public isARomanDigit(character: SingleChar): boolean {
-    let lowerCaseCharacter = character.toLowerCase();
-
-    // U can sometimes be used as a roman digit, but is not common
-
-    switch (lowerCaseCharacter) {
-      case "i":
-      case "v":
-      case "x":
-      case "l":
-      case "c":
-      case "d":
-      case "m":
-        return true;
-      default:
-        return false;
-    }
+  private isARomanDigit(character: Characters): boolean {
+    const lowerCaseCharacter: string = character.toLowerCase();
+    return /^[ivxlcdm]$/.test(lowerCaseCharacter);
   }
 
-  public romanDigitToNumber(character: SingleChar): number {
-    let lowerCaseCharacter = character.toLowerCase();
-
-    // U can sometimes be used instead of V, but is not common
-
+  private romanDigitToNumber(character: Characters): number {
+    const lowerCaseCharacter: string = character.toLowerCase();
     switch (lowerCaseCharacter) {
       case "i":
         return 1;
@@ -71,292 +35,65 @@ class Tricks {
     }
   }
 
-  public onlyRomanDigits(text: string): boolean {
-    for (const char of text) {
-      if (!this.isARomanDigit(char as SingleChar)) {
-        return false;
-      }
-    }
-
-    return true;
+  private onlyRomanDigits(text: string): boolean {
+    return /^[ivxlcdm]+$/i.test(text);
   }
 
-  // Some words that start with i can also start with j
-  // not sure if j is possible but it should not affect anything
-  // ex: iecit -> jecit
-  public switchFirstIOrJ(word: string): string {
-    word = word.toLowerCase();
-
-    if (word[0] == "i") {
-      return (word = "j" + word.slice(1));
+  private switchFirstIOrJ(word: string): string {
+    if (word[0] === "i") {
+      return "j" + word.slice(1);
     }
 
-    if (word[0] == "j") {
-      return (word = "i" + word.slice(1));
+    if (word[0] === "j") {
+      return "i" + word.slice(1);
     }
 
     return word;
   }
 
-  // Treats U and V as the same letter
-  // replace all u with v
-  // if no u, only v, replace all v with u
   private switchUorV(word: string): string {
-    word = word.toLowerCase();
-
     if (!word.includes("u") && word.includes("v")) {
       word = word.replace(/v/g, "u");
       return word;
     }
 
     word = word.replace(/u/g, "v");
-
     return word;
   }
 
-  //TODO: improve this code
-  public evaluateRomanNumerals(text: string): number {
+  public evaluateRomanNumerals(St: string): number {
     let total: number = 0;
-    const romanNumerals: string = text.toUpperCase();
-    let currentNumeral: number = romanNumerals.length - 1;
+    const numeralString: string = St.toUpperCase();
+    let prevNum: number = 0;
 
-    if (!this.onlyRomanDigits(romanNumerals)) {
+    if (!this.onlyRomanDigits(numeralString)) {
       return 0;
     }
 
-    /**
-     * Numerals in a string are added: CC = 200 ; CCX = 210.
-     * One numeral to the left of a larger numeral is subtracted: IX = 9 ; XL = 40.
-     *
-     * Subtract only a single letter from a single numeral.
-     * VIII for 8, not IIX; 19 is XIX, not IXX.
-     *
-     * Subtract only powers of ten (I, X, or C, but not V or L or D).
-     * Not VL for 45, but XLV; not LD for 450, but CDL.
-     *
-     * Don't subtract a number from one more than 10 times greater.
-     * Only subtract I from V or X; only X from L or C
-     * Not IL for 49, but XLIX; MIM is illegal.
-     *
-     * Only if any numeral preceding is at least 10 times greater.
-     * Not VIX for 14, but XIV
-     * Not IIX, but VIII
-     * Only if any numeral following is smaller
-     * Not XCL for 140, but CXL
-     */
+    for (let i = numeralString.length - 1; i >= 0; i--) {
+      const character: Characters = numeralString[i] as Characters;
+      const characterValue: number = this.romanDigitToNumber(character);
+      console.log(characterValue + " " + character);
+      console.log(total);
 
-    while (currentNumeral >= 0) {
-      /**
-       * Legal in ones position:
-       *
-       * I
-       * II
-       * III
-       * IIII IV
-       * V
-       * VI
-       * VII
-       * VIII
-       * VIIII IX
-       */
-
-      // Ones
-      if (romanNumerals[currentNumeral] === "I") {
-        total += 1;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        while (romanNumerals[currentNumeral] === "I") {
-          total += 1;
-          if (total >= 5) {
-            return 0;
-          }
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-      } else if (romanNumerals[currentNumeral] === "V") {
-        total += 5;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        if (romanNumerals[currentNumeral] === "I" && total === 5) {
-          total -= 1;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        } else if (
-          romanNumerals[currentNumeral] === "I" ||
-          romanNumerals[currentNumeral] === "V"
-        ) {
-          return 0;
-        }
+      if (characterValue < prevNum) {
+        total -= characterValue;
       } else {
+        total += characterValue;
+        prevNum = characterValue;
+      }
+
+      if (total >= 5000) {
         return 0;
       }
 
-      /**
-       * Legal in tens position:
-       *
-       * X
-       * XX
-       * XXX
-       * XXXX XL
-       * L
-       * LX
-       * LXX
-       * LXXX
-       * LXXXX XC
-       */
-
-      // Tens
-      if (romanNumerals[currentNumeral] === "X") {
-        total += 10;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        while (romanNumerals[currentNumeral] === "X") {
-          total += 10;
-          if (total >= 50) {
-            return 0;
-          }
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (romanNumerals[currentNumeral] === "I" && total === 10) {
-          total -= 1;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (romanNumerals[currentNumeral] === "V") {
-          total -= 5;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-      }
-
-      if (romanNumerals[currentNumeral] === "L") {
-        total += 50;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        if (romanNumerals[currentNumeral] === "X" && total <= 59) {
-          total -= 10;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (
-          romanNumerals[currentNumeral] === "I" ||
-          romanNumerals[currentNumeral] === "V" ||
-          romanNumerals[currentNumeral] === "X" ||
-          romanNumerals[currentNumeral] === "L"
-        ) {
-          return 0;
-        }
-
-        if (romanNumerals[currentNumeral] === "C") {
-          total += 100;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-          if (romanNumerals[currentNumeral] === "X" && total === 100) {
-            total -= 10;
-            currentNumeral--;
-            if (currentNumeral < 0) break;
-          }
-        }
-
-        if (
-          romanNumerals[currentNumeral] === "I" ||
-          romanNumerals[currentNumeral] === "V" ||
-          romanNumerals[currentNumeral] === "X" ||
-          romanNumerals[currentNumeral] === "L"
-        ) {
-          return 0;
-        }
-      }
-
-      if (romanNumerals[currentNumeral] === "C") {
-        total += 100;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        while (romanNumerals[currentNumeral] === "C") {
-          total += 100;
-          if (total >= 500) {
-            return 0;
-          }
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (romanNumerals[currentNumeral] === "X" && total <= 109) {
-          total -= 10;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (
-          romanNumerals[currentNumeral] === "I" ||
-          romanNumerals[currentNumeral] === "V" ||
-          romanNumerals[currentNumeral] === "X" ||
-          romanNumerals[currentNumeral] === "L" ||
-          romanNumerals[currentNumeral] === "C"
-        ) {
-          return 0;
-        }
-      }
-
-      // Finish
-      if (romanNumerals[currentNumeral] === "D") {
-        total += 500;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        if (romanNumerals[currentNumeral] === "C" && total <= 599) {
-          total -= 100;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (romanNumerals[currentNumeral] === "M") {
-          total += 1000;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (romanNumerals[currentNumeral] === "C" && total <= 1099) {
-          total -= 100;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (
-          romanNumerals[currentNumeral] === "I" ||
-          romanNumerals[currentNumeral] === "V" ||
-          romanNumerals[currentNumeral] === "X" ||
-          romanNumerals[currentNumeral] === "L" ||
-          romanNumerals[currentNumeral] === "C" ||
-          romanNumerals[currentNumeral] === "D"
-        ) {
-          return 0;
-        }
-      }
-
-      if (romanNumerals[currentNumeral] === "M") {
-        total += 1000;
-        currentNumeral--;
-        if (currentNumeral < 0) break;
-        while (romanNumerals[currentNumeral] === "M") {
-          total += 1000;
-          if (total >= 5000) {
-            return 0;
-          }
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (romanNumerals[currentNumeral] === "C" && total <= 1099) {
-          total -= 100;
-          currentNumeral--;
-          if (currentNumeral < 0) break;
-        }
-        if (
-          romanNumerals[currentNumeral] === "I" ||
-          romanNumerals[currentNumeral] === "V" ||
-          romanNumerals[currentNumeral] === "X" ||
-          romanNumerals[currentNumeral] === "L" ||
-          romanNumerals[currentNumeral] === "C" ||
-          romanNumerals[currentNumeral] === "D" ||
-          romanNumerals[currentNumeral] === "M"
-        ) {
-          return 0;
-        }
+      if (
+        (character === "V" || character === "L" || character === "D") &&
+        i > 0 &&
+        this.romanDigitToNumber(numeralString[i - 1] as Characters) < characterValue
+      ) {
+        total -= this.romanDigitToNumber(numeralString[i - 1] as Characters);
+        i--;
       }
     }
 
