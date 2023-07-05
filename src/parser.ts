@@ -52,7 +52,14 @@ class Parser {
     this.tricks = new Tricks();
     this.principlePartFinder = new PrinciplePartFinder();
     this.englishToLatin = new EnglishToLatin(this.english, this.wordsDict);
-    this.latinToEnglish = new LatinToEnglish(this.wordsDict, this.uniques, this.addons, this.stems, this.inflects, this.tricks);
+    this.latinToEnglish = new LatinToEnglish(
+      this.wordsDict,
+      this.uniques,
+      this.addons,
+      this.stems,
+      this.inflects,
+      this.tricks
+    );
     this.formatter = new Formatter(this.principlePartFinder);
   }
 

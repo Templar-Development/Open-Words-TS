@@ -1,9 +1,7 @@
 import PrinciplePartFinderData from "../types/PrinciplePartFinderData";
 
 class PrinciplePartFinder {
-
   constructor() {}
-  // optimize, all verbs 4 parts end in us, if they have 1
 
   public findPrincipleParts(props: PrinciplePartFinderData): string[] {
     const { pos, type, gender, orth } = props;
@@ -96,11 +94,15 @@ class PrinciplePartFinder {
     return orth;
   }
 
-  private setPrincipleParts(orths: string[], endings: string[], specialCase?: string): string[] {
+  private setPrincipleParts(
+    orths: string[],
+    endings: string[],
+    specialCase?: string
+  ): string[] {
     const orthsWithParts: string[] = [];
 
     if (endings.every((ending) => ending === "")) {
-      return [`${orths[0]} | ${specialCase}`]
+      return [`${orths[0]} | ${specialCase}`];
     }
 
     for (const orth in orths) {

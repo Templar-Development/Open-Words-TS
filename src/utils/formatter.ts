@@ -51,8 +51,6 @@ class Formatter {
         def.info.pos = word["w"]["pos"];
       }
 
-      //!!! maybe can remove this do testing. This might be able to be replaced with principlePartFinder
-      // Format the orth of the new object
       if ("parts" in word["w"]) {
         def.orth = word["w"]["parts"];
       } else {
@@ -92,7 +90,7 @@ class Formatter {
         word["w"]["form"] = word["w"]["pos"];
       }
 
-      // If we still don't have any inflections associated with the object
+      // If still no inflections associated with the object
       if (def["infls"].length == 0) {
         def["infls"] = [
           {
@@ -110,10 +108,15 @@ class Formatter {
       let orth = def["orth"];
       let pos = def["info"]["pos"];
       let type = def["info"]["type"];
-      let gender = def["info"]['gender']
+      let gender = def["info"]["gender"];
 
       if (pos == "V" || pos == "VPAR" || pos == "N" || pos == "ADJ") {
-        let principleParts = this.PrinciplePartFinder.findPrincipleParts({pos, type, gender, orth});
+        let principleParts = this.PrinciplePartFinder.findPrincipleParts({
+          pos,
+          type,
+          gender,
+          orth
+        });
         def.orth = principleParts;
       }
 

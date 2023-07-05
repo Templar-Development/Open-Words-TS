@@ -58,7 +58,15 @@ class UseData {
     this.wordsDict.forEach((word: LatinDictEntry) => {
       const { orth, pos } = word;
 
-      let valid = this.validateWord(orth, pos, minWordLength, maxWordLength, exactWordLength, wordStartsWith, onlyPOS);
+      let valid = this.validateWord(
+        orth,
+        pos,
+        minWordLength,
+        maxWordLength,
+        exactWordLength,
+        wordStartsWith,
+        onlyPOS
+      );
 
       if (!valid) return;
 
@@ -87,7 +95,15 @@ class UseData {
     this.english.forEach((word: EnglishDictEntry) => {
       const { orth, pos } = word;
 
-      let valid = this.validateWord(orth, pos, minWordLength, maxWordLength, exactWordLength, wordStartsWith, onlyPOS);
+      let valid = this.validateWord(
+        orth,
+        pos,
+        minWordLength,
+        maxWordLength,
+        exactWordLength,
+        wordStartsWith,
+        onlyPOS
+      );
 
       if (!valid) return;
 
@@ -145,8 +161,10 @@ class UseData {
   ): boolean {
     if (exactWordLength !== undefined && word.length !== exactWordLength)
       return false;
-    if (minWordLength !== undefined && word.length < minWordLength) return false;
-    if (maxWordLength !== undefined && word.length > maxWordLength) return false;
+    if (minWordLength !== undefined && word.length < minWordLength)
+      return false;
+    if (maxWordLength !== undefined && word.length > maxWordLength)
+      return false;
 
     if (onlyPOS !== undefined && !onlyPOS.includes(transPOS(pos))) return false;
 
