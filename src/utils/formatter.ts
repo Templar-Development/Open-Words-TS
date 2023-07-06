@@ -1,4 +1,5 @@
 import transDeclensions from "./keyTranslation/transDeclensions";
+import transPronoun from "./keyTranslation/transPronoun";
 import transGender from "./keyTranslation/transGender";
 import transMood from "./keyTranslation/transMood";
 import transNumber from "./keyTranslation/transNumber";
@@ -124,6 +125,12 @@ class Formatter {
         def.info.gender = transVerb(gender);
       } else if (pos == "N") {
         def.info.gender = transGender(gender);
+      } else if (pos == "PACK") {
+        //in this case the gender is a pronoun type specifier ex: relative or personal
+        def.info.gender = transPronoun(gender);
+      } else if (pos == "PRON") {
+        //in this case the gender is a pronoun type specifier ex: relative or personal
+        def.info.gender = transPronoun(gender);
       }
 
       def.info.pos = transPOS(pos);
