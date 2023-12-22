@@ -1,5 +1,11 @@
 # Open Words
 
+# **IMPORANT**
+
+This project will no longer be maintained. A continutation of this project in rust can be found [here](https://github.com/cqb13/vocab-vault).
+
+-----------------
+
 Open Words TS is a port of [Open Words](https://github.com/ArchimedesDigital/open_words) Python code to Typescript for future maintenance and improvement.
 Open Words is a port Of William Whitaker's original ada code to python.
 
